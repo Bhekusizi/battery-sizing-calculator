@@ -1,0 +1,2427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Battery Sizing Calculator — IEEE 485 | UPS &amp; DC Battery Bank Sizing</title>
+<meta name="description" content="Free battery sizing calculator per IEEE 485-2020 and AS 2676. Size stationary lead-acid, VRLA, NiCd, and Li-ion battery banks. Calculate cell count, Ah capacity, charger current, DC cable sizing, ventilation, duty cycle diagrams, and voltage discharge profiles.">
+<meta name="keywords" content="battery sizing calculator, IEEE 485, UPS battery sizing, battery bank sizing, DC battery calculator, stationary battery sizing, VRLA battery sizing, lead acid battery calculator, battery charger sizing, IEEE 946, AS 2676, battery duty cycle, battery capacity calculator, substation battery, emergency battery sizing, battery room ventilation, DC cable sizing">
+<meta name="author" content="SparkyCalc">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+<meta name="theme-color" content="#1e2738">
+
+<!-- Canonical URL -->
+<link rel="canonical" href="https://sparkycalc.com/battery-sizing-calculator">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Battery Sizing Calculator — IEEE 485 | Free Online Tool">
+<meta property="og:description" content="Size stationary battery banks per IEEE 485-2020. Calculate Ah capacity, cell count, charger sizing, DC cables, and ventilation. Free tool for electrical engineers.">
+<meta property="og:url" content="https://sparkycalc.com/battery-sizing-calculator">
+<meta property="og:site_name" content="SparkyCalc">
+<meta property="og:locale" content="en_AU">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Battery Sizing Calculator — IEEE 485 | SparkyCalc">
+<meta name="twitter:description" content="Free IEEE 485 battery sizing calculator. Duty cycle builder, capacity sizing, charger sizing, DC cable sizing, ventilation calc, and PDF reports.">
+
+<!-- JSON-LD Structured Data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Battery Sizing Calculator",
+  "description": "Free online battery sizing calculator based on IEEE 485-2020 and AS 2676 standards. Size stationary lead-acid, VRLA, NiCd, and Li-ion battery banks with interactive duty cycle diagrams, capacity sizing with temperature and aging corrections, charger sizing per IEEE 946, DC cable sizing per AS/NZS 3008, and battery room ventilation per EN 50272-2.",
+  "url": "https://sparkycalc.com/battery-sizing-calculator",
+  "applicationCategory": "Engineering Calculator",
+  "operatingSystem": "Web Browser",
+  "offers": {"@type": "Offer", "price": "0", "priceCurrency": "AUD"},
+  "author": {"@type": "Organization", "name": "SparkyCalc", "url": "https://sparkycalc.com"},
+  "featureList": [
+    "IEEE 485-2020 Ah method battery sizing",
+    "Interactive duty cycle builder with 80+ predefined loads",
+    "Temperature correction factors (IEEE 485 Table 1)",
+    "Series/parallel bank configuration",
+    "Battery charger sizing per IEEE 946",
+    "6 charging modes with interactive curves (CC, CV, CC-CV, IUoU, IUIa, Pulse)",
+    "DC cable sizing per AS/NZS 3008",
+    "Battery room ventilation per EN 50272-2",
+    "Voltage discharge profile simulation",
+    "PDF report generation with embedded charts",
+    "Support for VLA, VRLA, NiCd, and Li-ion batteries"
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do you size a stationary battery per IEEE 485?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "IEEE 485 uses the Ampere-hour method: define the DC load duty cycle, calculate total Ah demand, then apply correction factors for temperature (Table 1), aging (typically 1.25 for 80% end-of-life), depth of discharge, system efficiency, and design margin. The number of cells is determined by the system voltage limits and the float/end-of-discharge voltage per cell."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the standard aging factor for battery sizing?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "IEEE 485-2020 recommends an aging factor of 1.25 (125%) for standard lead-acid batteries, which accounts for the capacity dropping to 80% at end of useful life. For high-temperature or deep-cycle applications, a factor of 1.43 may be used. For Planté cells that maintain constant capacity, 1.00 is appropriate."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do you size a battery charger?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Per IEEE 946, the charger must supply both the continuous DC load and the recharge current simultaneously. Recharge current equals the Ah removed divided by the desired recharge time and charging efficiency. A 10-15% oversize factor is typically applied. Common recharge times are 8, 12, or 24 hours."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What ventilation is required for a battery room?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Per EN 50272-2 and AS/NZS 3011.1, battery rooms require ventilation to keep hydrogen concentration below 1% (the recommended safe limit, well below the 4% LEL). The required air flow depends on the number of cells, capacity, and charging mode. A minimum of 6 air changes per hour is typically required. Extract ductwork should terminate at the highest point of the room since hydrogen is lighter than air."
+      }
+    }
+  ]
+}
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg1:#1e2738;--bg2:#28334e;--bg3:#323f60;--bg4:#3c4b70;
+  --text:#ffffff;--text2:#cdd5e8;--text3:#adb8cf;
+  --amber:#e8a838;--amber-light:#f0c060;--amber-dim:rgba(232,168,56,0.18);--amber-glow:rgba(232,168,56,0.10);
+  --info:#4a9eff;--info-dim:rgba(74,158,255,0.12);
+  --success:#3ecf8e;--success-dim:rgba(62,207,142,0.12);
+  --danger:#f06060;--danger-dim:rgba(240,96,96,0.12);
+  --warn:#f0a030;--warn-dim:rgba(240,160,48,0.12);
+  --border:rgba(255,255,255,0.07);--border-hover:rgba(255,255,255,0.12);
+  --head:'Syne',sans-serif;--body:'Lora',serif;--mono:'DM Mono',monospace;
+  --radius:14px;--radius-sm:8px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg1);color:var(--text2);font:500 14px/1.6 var(--body);min-height:100vh}
+::selection{background:var(--amber);color:#0d1117}
+input,select,textarea,button{font-family:inherit;font-size:inherit}
+.wrap{max-width:1100px;margin:0 auto;padding:20px 16px 60px}
+
+/* HEADER */
+.hdr{display:flex;align-items:center;gap:14px;margin-bottom:20px;flex-wrap:wrap}
+.hdr-icon{width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,var(--amber-dim),var(--info-dim));display:flex;align-items:center;justify-content:center;box-shadow:0 0 20px var(--amber-glow)}
+.hdr h1{font:700 22px var(--head);color:var(--text);letter-spacing:-0.3px}
+.hdr h1 span{color:var(--amber)}
+.hdr-badge{margin-left:auto;font:600 11px var(--mono);color:var(--amber);background:var(--amber-dim);padding:4px 10px;border-radius:20px;border:1px solid rgba(232,168,56,0.25)}
+.hdr-sub{font:500 11px var(--mono);color:var(--text3);margin-top:2px}
+
+/* TABS */
+.tabs{display:flex;gap:2px;background:var(--bg2);border-radius:var(--radius);padding:3px;margin-bottom:18px;overflow-x:auto;align-items:center;border:1px solid var(--border)}
+.tab{flex:1;min-width:100px;padding:9px 12px;font:600 12px var(--head);color:var(--text3);background:transparent;border:none;border-radius:var(--radius-sm);cursor:pointer;transition:all .15s;text-align:center;white-space:nowrap}
+.tab.on{background:var(--bg4);color:var(--amber);box-shadow:0 2px 8px rgba(0,0,0,0.25)}
+.tab:hover:not(.on):not(.tab-action){color:var(--text2);background:rgba(60,75,112,0.4)}
+.tab-action{flex:0;min-width:auto;padding:8px 14px;background:var(--amber);color:#0d1117;font-weight:700;border:none;border-radius:var(--radius-sm);margin-left:4px}
+.tab-action:hover{background:var(--amber-light);box-shadow:0 0 12px var(--amber-glow)}
+.pane{display:none}.pane.on{display:block}
+
+/* CARDS */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:14px;overflow:hidden;position:relative}
+.card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:var(--radius) 0 0 var(--radius)}
+.card-input::before{background:var(--amber)}
+.card-input .card-title{color:var(--amber)}
+.card-input .card-head::after{content:'INPUT';font:600 9px var(--mono);color:var(--amber);background:var(--amber-dim);padding:2px 7px;border-radius:4px;margin-left:8px}
+.card-calc::before{background:var(--info)}
+.card-calc .card-title{color:var(--info)}
+.card-calc .card-head::after{content:'CALCULATED';font:600 9px var(--mono);color:var(--info);background:var(--info-dim);padding:2px 7px;border-radius:4px;margin-left:8px}
+.card-head{padding:12px 16px 10px;background:var(--bg3);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.card-title{font:700 13px var(--head);color:var(--text)}
+.card-body{padding:14px 16px}
+
+/* SECTION DIVIDERS */
+.section-divider{font:700 14px var(--head);color:var(--amber);padding:18px 0 8px;border-bottom:1px solid rgba(232,168,56,0.15);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.section-divider .num{width:26px;height:26px;border-radius:50%;background:var(--amber-dim);border:1px solid rgba(232,168,56,0.25);display:flex;align-items:center;justify-content:center;font:700 12px var(--mono);color:var(--amber)}
+
+/* PENCIL & LOCK ICONS for labels */
+.ico-pencil{display:inline-block;width:14px;height:14px;vertical-align:-2px;margin-right:3px;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11.5 1.5l3 3-9 9H2.5v-3l9-9z' stroke='%23e8a838' stroke-width='1.3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat center/contain}
+.ico-lock{display:inline-block;width:14px;height:14px;vertical-align:-2px;margin-right:3px;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='3' y='7' width='10' height='7' rx='1.5' stroke='%234a9eff' stroke-width='1.3'/%3E%3Cpath d='M5.5 7V5a2.5 2.5 0 015 0v2' stroke='%234a9eff' stroke-width='1.3' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat center/contain}
+
+/* FIELDS */
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font:600 11px var(--mono);color:var(--text3);text-transform:uppercase;letter-spacing:0.3px}
+.card-input .field label::before{content:'';display:inline-block;width:14px;height:14px;vertical-align:-2px;margin-right:3px;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11.5 1.5l3 3-9 9H2.5v-3l9-9z' stroke='%23e8a838' stroke-width='1.3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat center/contain}
+.card-calc .field label::before{content:'';display:inline-block;width:14px;height:14px;vertical-align:-2px;margin-right:3px;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='3' y='7' width='10' height='7' rx='1.5' stroke='%234a9eff' stroke-width='1.3'/%3E%3Cpath d='M5.5 7V5a2.5 2.5 0 015 0v2' stroke='%234a9eff' stroke-width='1.3' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat center/contain}
+.inline-inputs .field label::before{background:url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11.5 1.5l3 3-9 9H2.5v-3l9-9z' stroke='%23e8a838' stroke-width='1.3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat center/contain}
+.field input,.field select{background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:var(--radius-sm);font:500 13px var(--mono);transition:all .15s;border-left:3px solid rgba(232,168,56,0.4)}
+.field input:focus,.field select:focus{outline:none;border-color:var(--border-hover);border-left:3px solid var(--amber);box-shadow:0 0 0 3px var(--amber-glow)}
+.field select{cursor:pointer}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.row4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px}
+
+/* LOAD TABLE */
+.load-table{width:100%;border-collapse:collapse;font:500 12px var(--mono)}
+.load-table th{text-align:left;font:600 10px var(--mono);color:var(--text3);text-transform:uppercase;padding:6px 8px;border-bottom:1px solid var(--border);letter-spacing:0.3px}
+.load-table td{padding:5px 8px;border-bottom:1px solid var(--border);vertical-align:middle}
+.load-table td input,.load-table td select{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:6px 8px;border-radius:var(--radius-sm);font:500 12px var(--mono);border-left:3px solid rgba(232,168,56,0.3)}
+.load-table td input:focus,.load-table td select:focus{border-color:var(--border-hover);border-left:3px solid var(--amber);outline:none;box-shadow:0 0 0 3px var(--amber-glow)}
+.load-table .del-btn{background:var(--danger-dim);color:var(--danger);border:none;width:26px;height:26px;border-radius:var(--radius-sm);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.load-table .del-btn:hover{background:var(--danger);color:#fff}
+
+/* BUTTONS */
+.btn{padding:8px 16px;border-radius:var(--radius-sm);font:700 12px var(--head);cursor:pointer;transition:all .15s;border:none;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:var(--amber);color:#0d1117}
+.btn-primary:hover{background:var(--amber-light);box-shadow:0 0 12px var(--amber-glow)}
+.btn-amber{background:var(--amber);color:#0d1117}
+.btn-amber:hover{background:var(--amber-light);box-shadow:0 0 12px var(--amber-glow)}
+.btn-outline{background:var(--bg3);color:var(--text2);border:1px solid var(--border)}
+.btn-outline:hover{border-color:var(--border-hover);background:var(--bg4)}
+.btn-blue{background:var(--info-dim);color:var(--info);border:1px solid rgba(74,158,255,0.2)}
+.btn-blue:hover{background:rgba(74,158,255,0.18)}
+
+/* LIVE RESULTS STRIP */
+.live-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;padding:14px;background:var(--bg2);border:1px solid rgba(74,158,255,0.15);border-radius:var(--radius);margin-bottom:14px;border-left:4px solid var(--info)}
+.live-strip .ls-item{text-align:center}
+.live-strip .ls-val{font:600 18px var(--head);color:var(--text)}
+.live-strip .ls-lbl{font:600 9px var(--mono);color:var(--text3);text-transform:uppercase;letter-spacing:0.3px}
+
+/* COLLAPSIBLE */
+.collapse-toggle{cursor:pointer;user-select:none}
+.collapse-toggle::after{content:' [+]';font:600 11px var(--mono);color:var(--text3)}
+.collapse-toggle.open::after{content:' [-]'}
+.proj-toggle::after{content:'[+]';font:600 11px var(--mono);color:var(--text3)}
+.proj-toggle.open::after{content:'[-]'}
+.collapse-body{display:none;padding-top:10px}
+.collapse-body.open{display:block}
+
+/* INLINE INPUT GROUP */
+.inline-inputs{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:12px;border-left:3px solid var(--amber)}
+.inline-inputs .inline-label{font:600 10px var(--mono);color:var(--amber);text-transform:uppercase;letter-spacing:0.3px;margin-bottom:8px}
+
+/* METRICS */
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+.metric{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;position:relative;overflow:hidden}
+.metric::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px}
+.metric.m-info::before{background:var(--info)}
+.metric.m-amber::before{background:var(--amber)}
+.metric-label{font:600 10px var(--mono);color:var(--text3);text-transform:uppercase;letter-spacing:0.3px}
+.metric-val{font:600 20px var(--head);color:var(--text);margin-top:2px}
+.metric-unit{font:500 11px var(--mono);color:var(--text3);margin-top:1px}
+
+/* BREAKDOWN TABLE */
+.break-table{width:100%;border-collapse:collapse;font:500 12px var(--mono)}
+.break-table th{text-align:left;font:600 10px var(--mono);color:var(--text3);text-transform:uppercase;padding:8px 10px;border-bottom:1px solid var(--border);letter-spacing:0.3px}
+.break-table td{padding:7px 10px;border-bottom:1px solid var(--border);color:var(--text2)}
+.break-table tr:last-child td{border-bottom:none;font-weight:600;color:var(--amber)}
+
+/* NOTES */
+.note{font:italic 500 12px var(--body);color:var(--text3);padding:10px 14px;background:var(--bg2);border-radius:var(--radius-sm);border-left:3px solid var(--amber);margin-top:10px}
+
+/* PASS/FAIL — green reserved exclusively for compliance */
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font:600 11px var(--mono)}
+.badge-pass{background:var(--success-dim);color:var(--success);border:1px solid rgba(62,207,142,0.2)}
+.badge-warn{background:var(--warn-dim);color:var(--warn);border:1px solid rgba(240,160,48,0.2)}
+.badge-fail{background:var(--danger-dim);color:var(--danger);border:1px solid rgba(240,96,96,0.2)}
+
+/* CHARGER FLOW */
+.charger-diagram{display:flex;align-items:center;justify-content:center;gap:8px;padding:16px;flex-wrap:wrap}
+.charger-box{padding:14px 18px;border-radius:var(--radius);text-align:center;min-width:100px}
+.charger-box .val{font:600 18px var(--head);margin-top:4px}
+.charger-box .lbl{font:600 10px var(--mono);color:var(--text3);text-transform:uppercase}
+.charger-arrow{font-size:20px;color:var(--text3)}
+
+/* SVG CHARTS */
+#duty-cycle-svg{width:100%;height:200px;display:block}
+#charge-curve-svg{width:100%;height:300px;display:block}
+#vdischarge-svg{width:100%;height:240px;display:block}
+#bank-svg{width:100%;max-height:300px;display:block}
+#mini-charge-curve{width:100%;height:160px;display:block}
+
+/* FORMULAS */
+.formula-block{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:10px}
+.formula-block h4{font:700 12px var(--head);color:var(--amber);margin-bottom:6px}
+.formula-block .formula{font:600 14px var(--mono);color:var(--info);background:var(--info-dim);padding:8px 12px;border-radius:var(--radius-sm);margin:6px 0;border-left:3px solid var(--info);white-space:nowrap;overflow-x:auto}
+.formula-block p{font:500 12px var(--body);color:var(--text2);margin:4px 0;line-height:1.5}
+.formula-block .var-list{font:500 11px var(--mono);color:var(--text3);margin:4px 0 2px;line-height:1.8}
+.formula-block .var-list span{color:var(--amber);font-weight:600}
+.stage-badge{display:inline-block;padding:2px 8px;border-radius:4px;font:600 10px var(--mono);margin-right:6px}
+.stage-1{background:var(--amber-dim);color:var(--amber)}
+.stage-2{background:rgba(74,158,255,0.12);color:var(--info)}
+.stage-3{background:rgba(62,207,142,0.12);color:var(--success)}
+.stage-4{background:rgba(240,160,48,0.12);color:var(--warn)}
+
+/* LOAD LIBRARY */
+.lib-item{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:4px;cursor:pointer;transition:all .15s}
+.lib-item:hover{border-color:var(--amber);background:rgba(232,168,56,0.06)}
+.lib-cat{font:600 9px var(--mono);text-transform:uppercase;padding:2px 6px;border-radius:4px;white-space:nowrap;letter-spacing:0.3px}
+.lib-cat-switchgear{background:var(--amber-dim);color:var(--amber)}
+.lib-cat-protection{background:var(--info-dim);color:var(--info)}
+.lib-cat-lighting{background:var(--success-dim);color:var(--success)}
+.lib-cat-motors{background:rgba(74,158,255,0.12);color:var(--info)}
+.lib-cat-comms{background:rgba(168,123,239,0.12);color:#a87bef}
+.lib-cat-ups{background:var(--danger-dim);color:var(--danger)}
+.lib-cat-fire{background:var(--warn-dim);color:var(--warn)}
+.lib-cat-hvac{background:rgba(56,180,232,0.12);color:#38b4e8}
+.lib-cat-instrumentation{background:rgba(200,200,100,0.12);color:#c8c864}
+.lib-name{font:500 12px var(--body);color:var(--text);flex:1;min-width:0}
+.lib-detail{font:500 10px var(--mono);color:var(--text3);white-space:nowrap}
+.lib-add-btn{background:var(--amber);color:#0d1117;border:none;padding:4px 10px;border-radius:var(--radius-sm);font:700 10px var(--head);cursor:pointer;transition:all .15s;white-space:nowrap}
+.lib-add-btn:hover{background:var(--amber-light);box-shadow:0 0 8px var(--amber-glow)}
+.lib-empty{padding:20px;text-align:center;font:italic 500 12px var(--body);color:var(--text3)}
+
+@media(max-width:700px){.row3,.row4{grid-template-columns:1fr 1fr}.metrics{grid-template-columns:1fr 1fr}.hdr h1{font-size:18px}.live-strip{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:480px){.row2,.row3,.row4{grid-template-columns:1fr}.tabs{flex-wrap:nowrap}.live-strip{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="hdr">
+  <div class="hdr-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#e8a838" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="6" width="18" height="12" rx="2"/><line x1="23" y1="10" x2="23" y2="14"/><line x1="7" y1="10" x2="7" y2="14"/><line x1="11" y1="10" x2="11" y2="14"/></svg></div>
+  <div><h1>Battery &amp; UPS <span>Sizing</span> Calculator</h1><div class="hdr-sub">IEEE 485-2020 · AS 2676 · IEEE 946 · AS/NZS 3008</div></div>
+  <div class="hdr-badge">SparkyCalc</div>
+</div>
+
+<!-- PROJECT DETAILS -->
+<div class="card" style="margin-bottom:14px;border-left:3px solid var(--amber)">
+  <div class="card-head" style="background:var(--bg3);cursor:pointer;user-select:none" onclick="document.getElementById('proj-body').classList.toggle('open');this.querySelector('.proj-toggle').classList.toggle('open')">
+    <span class="card-title" style="color:var(--amber)">Project Details</span>
+    <span class="proj-toggle open" style="font:600 11px var(--mono);color:var(--text3)"></span>
+  </div>
+  <div class="card-body collapse-body open" id="proj-body">
+    <div class="row3">
+      <div class="field"><label>Project Name</label><input type="text" id="proj-name" value="" placeholder="e.g. Smith St Substation"></div>
+      <div class="field"><label>Project Number</label><input type="text" id="proj-number" value="" placeholder="e.g. PRJ-2026-001"></div>
+      <div class="field"><label>Client</label><input type="text" id="proj-client" value="" placeholder="e.g. SA Power Networks"></div>
+    </div>
+    <div class="row3" style="margin-top:10px">
+      <div class="field"><label>Location / Site</label><input type="text" id="proj-location" value="" placeholder="e.g. Adelaide, SA"></div>
+      <div class="field"><label>Designed By</label><input type="text" id="proj-designer" value="" placeholder="Engineer name"></div>
+      <div class="field"><label>Date</label><input type="date" id="proj-date" value=""></div>
+    </div>
+    <div class="row3" style="margin-top:10px">
+      <div class="field"><label>Drawing / Doc Ref</label><input type="text" id="proj-drawing" value="" placeholder="e.g. DWG-E-001 Rev A"></div>
+      <div class="field"><label>Revision</label><input type="text" id="proj-revision" value="" placeholder="e.g. A"></div>
+      <div class="field"><label>Status</label>
+        <select id="proj-status">
+          <option value="Preliminary" selected>Preliminary</option>
+          <option value="For Review">For Review</option>
+          <option value="For Approval">For Approval</option>
+          <option value="Approved">Approved</option>
+          <option value="As Built">As Built</option>
+        </select>
+      </div>
+    </div>
+    <div style="margin-top:10px">
+      <div class="field"><label>Notes / Description</label><textarea id="proj-notes" rows="2" placeholder="Brief description of battery system purpose..." style="background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:var(--radius-sm);font:500 13px var(--mono);border-left:3px solid rgba(232,168,56,0.4);resize:vertical;width:100%"></textarea></div>
+    </div>
+  </div>
+</div>
+
+<div class="tabs" role="tablist" aria-label="Calculator sections">
+  <button class="tab on" role="tab" aria-selected="true" aria-controls="pane-design" onclick="showTab('design')">Design</button>
+  <button class="tab" role="tab" aria-selected="false" aria-controls="pane-results" onclick="showTab('results')">Full Results</button>
+  <button class="tab" role="tab" aria-selected="false" aria-controls="pane-reference" onclick="showTab('reference')">Reference</button>
+  <button class="tab tab-action" aria-label="Generate PDF report" onclick="generatePDFReport()">PDF Report</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     TAB 1: DESIGN — natural sizing workflow
+     ═══════════════════════════════════════════════════════ -->
+<div class="pane on" id="pane-design" role="tabpanel" aria-label="Design inputs">
+
+  <!-- STEP 1: SYSTEM -->
+  <div class="section-divider"><span class="num">1</span> Define the DC System</div>
+  <div class="card card-input">
+    <div class="card-head"><span class="card-title">System &amp; Battery</span><span style="font:400 10px var(--mono);color:var(--text3)">IEEE 485 §6.2</span></div>
+    <div class="card-body">
+      <div class="row4">
+        <div class="field"><label>Nominal Voltage</label><select id="sys-v" onchange="calc()"><option value="12">12 V</option><option value="24">24 V</option><option value="48">48 V</option><option value="110" selected>110 V</option><option value="125">125 V</option><option value="220">220 V</option><option value="250">250 V</option></select></div>
+        <div class="field"><label>Min System V</label><input type="number" id="sys-vmin" value="105" step="1" oninput="calc()"></div>
+        <div class="field"><label>Max System V</label><input type="number" id="sys-vmax" value="140" step="1" oninput="calc()"></div>
+        <div class="field"><label>Battery Type</label><select id="batt-type" onchange="onBattTypeChange();calc()"><option value="vla">Vented Lead-Acid</option><option value="vrla" selected>VRLA (Sealed)</option><option value="nicd">Nickel-Cadmium</option><option value="liion">Lithium-Ion (LFP)</option></select></div>
+      </div>
+      <div class="row4" style="margin-top:10px">
+        <div class="field"><label>Float V/cell</label><input type="number" id="float-vpc" value="2.25" step="0.01" oninput="calc()"></div>
+        <div class="field"><label>EoD V/cell</label><input type="number" id="eod-vpc" value="1.75" step="0.01" oninput="calc()"></div>
+        <div class="field"><label>Autonomy (min)</label><input type="number" id="autonomy" value="480" step="1" min="1" oninput="calc()"></div>
+        <div class="field"><label>Ambient Temp (deg C)</label><input type="number" id="ambient-temp" value="25" step="0.5" oninput="calc()"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: LOADS -->
+  <div class="section-divider"><span class="num">2</span> Enter the Loads</div>
+  <div class="card card-input">
+    <div class="card-head"><span class="card-title">Load Profile (Duty Cycle)</span>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-amber" onclick="openLoadLibrary()">+ Library</button>
+        <button class="btn btn-amber" onclick="addLoad()">+ Custom</button>
+        <button class="btn btn-blue" onclick="addPreset()">Preset</button>
+        <button class="btn btn-outline" onclick="clearLoads()">Clear All</button>
+      </div>
+    </div>
+    <div class="card-body" style="padding:0;overflow-x:auto">
+      <div id="load-library-panel" style="display:none;padding:12px 16px;background:var(--bg2);border-bottom:1px solid var(--bg4)">
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap">
+          <input type="text" id="lib-search" placeholder="Search loads..." oninput="filterLibrary()" style="flex:1;min-width:180px;background:var(--bg1);border:1px solid var(--bg4);color:var(--text);padding:8px 12px;border-radius:var(--radius-sm);font:400 12px var(--mono);border-left:3px solid rgba(232,168,56,0.4)">
+          <select id="lib-category" onchange="filterLibrary()" style="background:var(--bg1);border:1px solid var(--bg4);color:var(--text);padding:8px 10px;border-radius:var(--radius-sm);font:400 12px var(--mono);border-left:3px solid rgba(232,168,56,0.4)">
+            <option value="all">All Categories</option><option value="switchgear">Switchgear</option><option value="protection">Protection &amp; Control</option><option value="lighting">Emergency Lighting</option><option value="motors">Motors &amp; Valves</option><option value="comms">Communications</option><option value="ups">UPS / IT</option><option value="fire">Fire Systems</option><option value="hvac">HVAC</option><option value="instrumentation">Instrumentation</option>
+          </select>
+          <div class="field" style="flex:0;min-width:60px"><label>Qty</label><input type="number" id="lib-qty" value="1" min="1" max="50" step="1" style="width:60px;text-align:center"></div>
+          <button class="btn btn-outline" onclick="closeLoadLibrary()">Close</button>
+        </div>
+        <div id="lib-results" style="max-height:280px;overflow-y:auto"></div>
+      </div>
+      <table class="load-table" aria-label="Load profile duty cycle table">
+        <thead><tr><th>Load Description</th><th style="width:75px">Type</th><th style="width:70px">Amps</th><th style="width:70px">Watts</th><th style="width:70px">Start</th><th style="width:70px">Duration</th><th style="width:30px"></th></tr></thead>
+        <tbody id="load-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- DUTY CYCLE PREVIEW -->
+  <div class="card card-calc">
+    <div class="card-head"><span class="card-title">Duty Cycle Diagram</span><span style="font:400 10px var(--mono);color:var(--text3)">IEEE 485 Figure 1</span></div>
+    <div class="card-body" style="padding:8px"><svg id="duty-cycle-svg" viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg" aria-label="Duty cycle diagram showing current vs time profile"></svg></div>
+  </div>
+
+  <!-- STEP 3: LIVE RESULTS — instant feedback -->
+  <div class="section-divider"><span class="num">3</span> Battery Size (live)</div>
+  <div id="live-strip" class="live-strip">
+    <div class="ls-item"><div class="ls-val" id="ls-ah">--</div><div class="ls-lbl">Capacity (Ah)</div></div>
+    <div class="ls-item"><div class="ls-val" id="ls-cells">--</div><div class="ls-lbl">Cells (series)</div></div>
+    <div class="ls-item"><div class="ls-val" id="ls-strings">--</div><div class="ls-lbl">Strings</div></div>
+    <div class="ls-item"><div class="ls-val" id="ls-kwh">--</div><div class="ls-lbl">Bank kWh</div></div>
+    <div class="ls-item"><div class="ls-val" id="ls-charger">--</div><div class="ls-lbl">Charger (A)</div></div>
+    <div class="ls-item"><div class="ls-val" id="ls-weight">--</div><div class="ls-lbl">Est. Weight</div></div>
+  </div>
+
+  <!-- STEP 4: FINE-TUNE (collapsed by default) -->
+  <div class="card card-input">
+    <div class="card-head">
+      <span class="card-title collapse-toggle open" onclick="toggleCollapse('corrections')">Correction &amp; Safety Factors</span>
+      <span style="font:500 10px var(--mono);color:var(--text3)">IEEE 485 §6.3 — click to collapse</span>
+    </div>
+    <div class="card-body collapse-body open" id="corrections">
+      <div class="row4">
+        <div class="field"><label>Aging Factor</label><select id="aging-factor" onchange="calc()"><option value="1.00">1.00 — Plante</option><option value="1.11">1.11 — NiCd shallow</option><option value="1.25" selected>1.25 — Standard</option><option value="1.43">1.43 — High temp</option></select></div>
+        <div class="field"><label>Design Margin (%)</label><input type="number" id="design-margin" value="15" step="1" min="0" max="50" oninput="calc()"></div>
+        <div class="field"><label>Max DoD (%)</label><input type="number" id="max-dod" value="80" step="5" min="10" max="100" oninput="calc()"></div>
+        <div class="field"><label>System Efficiency (%)</label><input type="number" id="sys-eff" value="95" step="1" min="50" max="100" oninput="calc()"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 5: BANK CONFIG (after user knows the capacity) -->
+  <div class="card card-input">
+    <div class="card-head">
+      <span class="card-title collapse-toggle open" onclick="toggleCollapse('bankconfig')">Bank Configuration (Series / Parallel)</span>
+      <span style="font:500 10px var(--mono);color:var(--text3)">Auto-configured — click to collapse</span>
+    </div>
+    <div class="card-body collapse-body open" id="bankconfig">
+      <div class="row4">
+        <div class="field"><label>Config Mode</label><select id="config-mode" onchange="onConfigModeChange();calc()"><option value="auto" selected>Auto</option><option value="manual">Manual</option></select></div>
+        <div class="field"><label>Parallel Strings</label><input type="number" id="parallel-strings" value="1" step="1" min="1" max="20" oninput="calc()" disabled></div>
+        <div class="field"><label>Ah per String</label><input type="number" id="ah-per-string" value="0" step="1" min="0" oninput="calc()" disabled></div>
+        <div class="field"><label>Cells per String</label><input type="number" id="cells-per-string" value="0" step="1" min="0" oninput="calc()" disabled></div>
+      </div>
+      <div id="config-summary" style="margin-top:10px;padding:10px 14px;background:var(--bg2);border-radius:var(--radius-sm);border-left:3px solid var(--info);font:500 12px var(--mono);color:var(--text2)"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     TAB 2: FULL RESULTS — all outputs + secondary inputs inline
+     ═══════════════════════════════════════════════════════ -->
+<div class="pane" id="pane-results" role="tabpanel" aria-label="Full results">
+  <div id="results-area"><p style="color:var(--text3);font-style:italic;padding:20px">Add loads to see results.</p></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     TAB 3: REFERENCE
+     ═══════════════════════════════════════════════════════ -->
+<div class="pane" id="pane-reference" role="tabpanel" aria-label="Reference and formulas">
+  <div class="card card-input">
+    <div class="card-head"><span class="card-title">Charging Mode</span><span style="font:400 10px var(--mono);color:var(--text3)">IEEE 1106 / IEC 60896 / DIN 41773</span></div>
+    <div class="card-body">
+      <div class="row2">
+        <div class="field"><label>Charging Method</label><select id="charge-mode" onchange="secInputs.chargeMode=this.value;drawChargeCurve();renderChargeFormulas()"><option value="cc" selected>CC — Constant Current</option><option value="cv">CV — Constant Voltage</option><option value="cccv">CC-CV — Two Stage</option><option value="iuou">IUoU — Three Stage (DIN 41773)</option><option value="iuia">IUIa — Equalise Charge</option><option value="pulse">Pulse Charging</option></select></div>
+        <div class="field"><label>Battery Chemistry</label><select id="charge-chem" onchange="drawChargeCurve();renderChargeFormulas()"><option value="la" selected>Lead-Acid</option><option value="nicd">NiCd</option><option value="liion">Li-ion (LFP/NMC)</option></select></div>
+      </div>
+    </div>
+  </div>
+  <div class="card card-calc">
+    <div class="card-head"><span class="card-title">Charging Profile Curve</span><span id="curve-mode-label" style="font:400 10px var(--mono);color:var(--text3)">CC</span></div>
+    <div class="card-body" style="padding:8px"><svg id="charge-curve-svg" viewBox="0 0 700 300" xmlns="http://www.w3.org/2000/svg" aria-label="Charging profile curve showing voltage and current vs charge progress"></svg></div>
+  </div>
+  <div class="card card-calc">
+    <div class="card-head"><span class="card-title">Charging Formulas &amp; Theory</span></div>
+    <div class="card-body" id="charge-formulas-body"></div>
+  </div>
+</div>
+
+</div>
+<script>
+// ─── STATE ────────────────────────────────────────────────
+let loads = [];
+let loadId = 0;
+let results = {};
+
+// Persistent state for secondary inputs (survive Results tab re-renders)
+let secInputs = {
+  chargeMode:'cccv',
+  rechargeTime:'8', rechargeEff:'85', chargerOversize:'1.15',
+  cableLength:'25', cableVdLimit:'5', cableInstall:'trefoil_enclosed',
+  cableMaterial:'cu', cableInsulation:'xlpe', cableAmbient:'40',
+  roomLength:'6', roomWidth:'4', roomHeight:'3',
+  h2Limit:'1.0', ventChargeMode:'float', ventSafety:'1.25'
+};
+
+function secVal(id, fallback){ 
+  const el=document.getElementById(id); 
+  return el ? el.value : fallback; 
+}
+function secSave(){
+  const map={
+    'charge-mode-results':'chargeMode',
+    'recharge-time':'rechargeTime','recharge-eff':'rechargeEff','charger-oversize':'chargerOversize',
+    'cable-length':'cableLength','cable-vd-limit':'cableVdLimit','cable-install':'cableInstall',
+    'cable-material':'cableMaterial','cable-insulation':'cableInsulation','cable-ambient':'cableAmbient',
+    'room-length':'roomLength','room-width':'roomWidth','room-height':'roomHeight',
+    'h2-limit':'h2Limit','vent-charge-mode':'ventChargeMode','vent-safety':'ventSafety'
+  };
+  for(const [elId,key] of Object.entries(map)){
+    const el=document.getElementById(elId);
+    if(el) secInputs[key]=el.value;
+  }
+}
+
+// ─── IEEE 485 Table 1: Temperature correction factors ─────
+const TEMP_TABLE = [
+  [4.4,1.300],[7.2,1.250],[10.0,1.190],[12.8,1.150],[15.6,1.110],
+  [18.3,1.080],[18.9,1.072],[19.4,1.064],[20.0,1.056],[20.6,1.048],
+  [21.1,1.040],[21.7,1.034],[22.2,1.029],[22.8,1.023],[23.4,1.017],
+  [23.9,1.011],[24.5,1.006],[25.0,1.000],[25.6,0.994],[26.1,0.987],
+  [26.7,0.980],[27.2,0.976],[27.8,0.972],[28.3,0.968],[28.9,0.964],
+  [29.4,0.960],[30.0,0.956],[30.6,0.952],[31.1,0.948],[31.6,0.944],
+  [32.2,0.940],[35.0,0.930],[37.8,0.910],[40.6,0.890],[43.3,0.880],
+  [46.1,0.870],[48.9,0.860]
+];
+
+const BATT_DEFAULTS = {
+  vla:  {float:2.25, eod:1.75, nom:2.0},
+  vrla: {float:2.27, eod:1.75, nom:2.0},
+  nicd: {float:1.42, eod:1.10, nom:1.2},
+  liion:{float:3.65, eod:3.00, nom:3.2}
+};
+
+// ─── PREDEFINED LOAD LIBRARY ─────────────────────────────
+const LOAD_LIBRARY = [
+  // SWITCHGEAR
+  {cat:'switchgear', desc:'HV circuit breaker — trip coil (spring)', amps:3, watts:0, type:'momentary', dur:0.1, note:'Per CB, 110/220Vdc spring-charged mechanism'},
+  {cat:'switchgear', desc:'HV circuit breaker — close coil (spring)', amps:5, watts:0, type:'momentary', dur:0.1, note:'Per CB, spring-charged close operation'},
+  {cat:'switchgear', desc:'HV circuit breaker — trip coil (solenoid)', amps:15, watts:0, type:'momentary', dur:0.5, note:'Per CB, direct solenoid trip'},
+  {cat:'switchgear', desc:'HV circuit breaker — close coil (solenoid)', amps:30, watts:0, type:'momentary', dur:0.5, note:'Per CB, direct solenoid close'},
+  {cat:'switchgear', desc:'MV vacuum CB — trip coil', amps:2.5, watts:0, type:'momentary', dur:0.1, note:'Per CB, 110Vdc'},
+  {cat:'switchgear', desc:'MV vacuum CB — close coil', amps:4, watts:0, type:'momentary', dur:0.1, note:'Per CB, 110Vdc'},
+  {cat:'switchgear', desc:'LV ACB — trip coil', amps:1.5, watts:0, type:'momentary', dur:0.1, note:'Per ACB, 110/220Vdc'},
+  {cat:'switchgear', desc:'LV ACB — close coil', amps:3, watts:0, type:'momentary', dur:0.1, note:'Per ACB, 110/220Vdc'},
+  {cat:'switchgear', desc:'LV ACB — spring charge motor', amps:2.5, watts:0, type:'momentary', dur:0.25, note:'Per ACB, spring recharge'},
+  {cat:'switchgear', desc:'Motorised isolator / disconnector', amps:5, watts:0, type:'momentary', dur:0.5, note:'Per device, open or close'},
+  {cat:'switchgear', desc:'SF6 CB — trip coil', amps:4, watts:0, type:'momentary', dur:0.1, note:'Per CB, 110Vdc'},
+  {cat:'switchgear', desc:'SF6 CB — close coil', amps:8, watts:0, type:'momentary', dur:0.2, note:'Per CB, 110Vdc'},
+  {cat:'switchgear', desc:'SF6 CB — spring motor recharge', amps:6, watts:0, type:'momentary', dur:1, note:'Per CB, spring mechanism'},
+  {cat:'switchgear', desc:'Contactor — DC close/hold', amps:0.5, watts:0, type:'continuous', dur:480, note:'Per contactor, DC holding coil'},
+  {cat:'switchgear', desc:'Transfer switch — motorised ATS', amps:8, watts:0, type:'momentary', dur:0.5, note:'Per ATS, transfer operation'},
+
+  // PROTECTION & CONTROL
+  {cat:'protection', desc:'Numerical protection relay (e.g. SEL, ABB REF)', amps:0.15, watts:0, type:'continuous', dur:480, note:'Per relay, typical 15-25W'},
+  {cat:'protection', desc:'Electromechanical protection relay', amps:0.05, watts:0, type:'continuous', dur:480, note:'Per relay, coil consumption'},
+  {cat:'protection', desc:'Bay control unit (BCU)', amps:0.25, watts:0, type:'continuous', dur:480, note:'Per bay, IEC 61850'},
+  {cat:'protection', desc:'RTU / SCADA gateway', amps:0.5, watts:0, type:'continuous', dur:480, note:'Per unit, DNP3/IEC 104'},
+  {cat:'protection', desc:'Substation HMI / local panel PC', amps:1.5, watts:0, type:'continuous', dur:480, note:'Typical industrial panel PC'},
+  {cat:'protection', desc:'Annunciator / alarm panel', amps:0.3, watts:0, type:'continuous', dur:480, note:'LED annunciator, per panel'},
+  {cat:'protection', desc:'Indicating lamps / LEDs (panel)', amps:0.1, watts:0, type:'continuous', dur:480, note:'Allowance per switchboard panel'},
+  {cat:'protection', desc:'Metering / power quality analyser', amps:0.2, watts:0, type:'continuous', dur:480, note:'Per device, digital metering'},
+  {cat:'protection', desc:'GPS clock / time synchronisation', amps:0.15, watts:0, type:'continuous', dur:480, note:'IRIG-B / PTP master clock'},
+  {cat:'protection', desc:'Auxiliary relay / interlock (DC)', amps:0.05, watts:0, type:'continuous', dur:480, note:'Per relay, auxiliary/interposing'},
+  {cat:'protection', desc:'Event / disturbance recorder', amps:0.3, watts:0, type:'continuous', dur:480, note:'Per device'},
+  {cat:'protection', desc:'PLC / programmable controller', amps:0.8, watts:0, type:'continuous', dur:480, note:'Typical small-medium PLC'},
+
+  // EMERGENCY LIGHTING
+  {cat:'lighting', desc:'Emergency lighting — small room', amps:1, watts:0, type:'continuous', dur:480, note:'2-4 fittings, LED'},
+  {cat:'lighting', desc:'Emergency lighting — switchroom', amps:3, watts:0, type:'continuous', dur:480, note:'6-10 fittings, LED'},
+  {cat:'lighting', desc:'Emergency lighting — control room', amps:5, watts:0, type:'continuous', dur:480, note:'10-20 fittings, LED'},
+  {cat:'lighting', desc:'Emergency lighting — substation yard', amps:8, watts:0, type:'continuous', dur:480, note:'External floodlights, LED'},
+  {cat:'lighting', desc:'Emergency lighting — cable basement', amps:2, watts:0, type:'continuous', dur:480, note:'4-8 fittings, LED'},
+  {cat:'lighting', desc:'Exit sign — DC powered', amps:0.1, watts:0, type:'continuous', dur:480, note:'Per sign, LED'},
+  {cat:'lighting', desc:'Emergency lighting — warehouse/plant', amps:10, watts:0, type:'continuous', dur:480, note:'Large area, 20+ fittings'},
+
+  // MOTORS & VALVES
+  {cat:'motors', desc:'MOV — motor operated valve (open/close)', amps:8, watts:0, type:'noncontinuous', dur:2, note:'Per valve, 110Vdc motor'},
+  {cat:'motors', desc:'MOV — large (150mm+)', amps:15, watts:0, type:'noncontinuous', dur:3, note:'Per valve, heavy-duty'},
+  {cat:'motors', desc:'Solenoid valve — DC operated', amps:0.5, watts:0, type:'continuous', dur:480, note:'Per valve, holding current'},
+  {cat:'motors', desc:'DC motor — turbine lube oil pump', amps:25, watts:0, type:'noncontinuous', dur:60, note:'Emergency lubrication'},
+  {cat:'motors', desc:'DC motor — turbine turning gear', amps:40, watts:0, type:'noncontinuous', dur:120, note:'Slow roll during cooldown'},
+  {cat:'motors', desc:'DC motor — diesel generator starter', amps:150, watts:0, type:'momentary', dur:0.5, note:'Per start attempt, cranking'},
+  {cat:'motors', desc:'DC motor — diesel generator prelube', amps:10, watts:0, type:'momentary', dur:1, note:'Pre-start lube pump'},
+  {cat:'motors', desc:'Damper actuator — DC', amps:2, watts:0, type:'noncontinuous', dur:1, note:'Per actuator'},
+  {cat:'motors', desc:'DC fan / blower — battery room ventilation', amps:4, watts:0, type:'continuous', dur:480, note:'Hydrogen extraction fan'},
+
+  // COMMUNICATIONS
+  {cat:'comms', desc:'Ethernet switch — industrial (8-port)', amps:0.3, watts:0, type:'continuous', dur:480, note:'Managed, 24Vdc PoE capable'},
+  {cat:'comms', desc:'Ethernet switch — industrial (24-port)', amps:0.8, watts:0, type:'continuous', dur:480, note:'Managed layer 2/3'},
+  {cat:'comms', desc:'Fibre optic media converter', amps:0.1, watts:0, type:'continuous', dur:480, note:'Per unit'},
+  {cat:'comms', desc:'Radio / telecommunications transceiver', amps:2, watts:0, type:'continuous', dur:480, note:'UHF/VHF base station'},
+  {cat:'comms', desc:'Telephone system — PABX', amps:3, watts:0, type:'continuous', dur:480, note:'Small PABX, DC powered'},
+  {cat:'comms', desc:'PA / intercom system amplifier', amps:2, watts:0, type:'continuous', dur:480, note:'Per zone amplifier'},
+  {cat:'comms', desc:'CCTV camera (PoE)', amps:0.15, watts:0, type:'continuous', dur:480, note:'Per camera via PoE switch'},
+  {cat:'comms', desc:'NVR / DVR recorder', amps:1, watts:0, type:'continuous', dur:480, note:'Network video recorder'},
+  {cat:'comms', desc:'Modem — cellular/4G gateway', amps:0.2, watts:0, type:'continuous', dur:480, note:'Per modem'},
+  {cat:'comms', desc:'Router / firewall', amps:0.5, watts:0, type:'continuous', dur:480, note:'Industrial grade'},
+
+  // UPS / IT
+  {cat:'ups', desc:'Server — rack mounted (single)', amps:3, watts:0, type:'continuous', dur:480, note:'Typical 1U/2U server'},
+  {cat:'ups', desc:'Server — rack mounted (dual PSU)', amps:5, watts:0, type:'continuous', dur:480, note:'Enterprise server'},
+  {cat:'ups', desc:'Network rack (mixed IT)', amps:10, watts:0, type:'continuous', dur:480, note:'Full rack: switches, servers, storage'},
+  {cat:'ups', desc:'Workstation / desktop PC', amps:1.5, watts:0, type:'continuous', dur:480, note:'Per workstation + monitor'},
+  {cat:'ups', desc:'UPS — small (1-3 kVA)', amps:8, watts:0, type:'continuous', dur:480, note:'Output load on DC bus'},
+  {cat:'ups', desc:'UPS — medium (10 kVA)', amps:25, watts:0, type:'continuous', dur:480, note:'Output load on DC bus'},
+
+  // FIRE SYSTEMS
+  {cat:'fire', desc:'Fire alarm panel (FACP)', amps:1.5, watts:0, type:'continuous', dur:480, note:'Addressable panel, standby'},
+  {cat:'fire', desc:'Fire alarm panel — in alarm', amps:4, watts:0, type:'noncontinuous', dur:30, note:'Full alarm condition, all NACs active'},
+  {cat:'fire', desc:'Fire pump controller — DC solenoid start', amps:3, watts:0, type:'momentary', dur:0.5, note:'Diesel fire pump start solenoid'},
+  {cat:'fire', desc:'Smoke / gas detector (per loop)', amps:0.3, watts:0, type:'continuous', dur:480, note:'Per detection loop, addressable'},
+  {cat:'fire', desc:'Sprinkler valve — solenoid release', amps:2, watts:0, type:'momentary', dur:0.5, note:'Per zone deluge valve'},
+  {cat:'fire', desc:'Fire door holder — magnetic release', amps:0.15, watts:0, type:'continuous', dur:480, note:'Per door, DC hold-open magnet'},
+  {cat:'fire', desc:'Gaseous suppression — solenoid release', amps:3, watts:0, type:'momentary', dur:0.5, note:'FM200/Novec cylinder release'},
+
+  // HVAC & MECHANICAL
+  {cat:'hvac', desc:'BMS / building management controller', amps:0.5, watts:0, type:'continuous', dur:480, note:'DDC controller, per unit'},
+  {cat:'hvac', desc:'Smoke damper actuator — DC', amps:2, watts:0, type:'noncontinuous', dur:1, note:'Per fire/smoke damper'},
+  {cat:'hvac', desc:'Stairwell pressurisation fan VSD', amps:5, watts:0, type:'noncontinuous', dur:120, note:'DC control supply to VSD'},
+  {cat:'hvac', desc:'Chiller plant controller', amps:0.3, watts:0, type:'continuous', dur:480, note:'Supervisory controller'},
+  {cat:'hvac', desc:'Cooling fan — DC (battery room)', amps:3, watts:0, type:'continuous', dur:480, note:'Battery room extract fan'},
+
+  // INSTRUMENTATION
+  {cat:'instrumentation', desc:'Pressure transmitter (4-20mA)', amps:0.02, watts:0, type:'continuous', dur:480, note:'Per transmitter, loop powered'},
+  {cat:'instrumentation', desc:'Temperature transmitter', amps:0.02, watts:0, type:'continuous', dur:480, note:'Per transmitter'},
+  {cat:'instrumentation', desc:'Level transmitter', amps:0.03, watts:0, type:'continuous', dur:480, note:'Per transmitter'},
+  {cat:'instrumentation', desc:'Flow meter — electromagnetic', amps:0.2, watts:0, type:'continuous', dur:480, note:'Per meter, DC supply'},
+  {cat:'instrumentation', desc:'Analyser (pH / conductivity)', amps:0.5, watts:0, type:'continuous', dur:480, note:'Per analyser'},
+  {cat:'instrumentation', desc:'DCS marshalling cabinet (per I/O card)', amps:0.1, watts:0, type:'continuous', dur:480, note:'Per I/O module'},
+  {cat:'instrumentation', desc:'Safety PLC / SIS controller', amps:1.5, watts:0, type:'continuous', dur:480, note:'Per SIS rack, SIL rated'},
+  {cat:'instrumentation', desc:'Vibration monitor', amps:0.1, watts:0, type:'continuous', dur:480, note:'Per sensor/transmitter'},
+];
+
+function openLoadLibrary(){
+  document.getElementById('load-library-panel').style.display='block';
+  document.getElementById('lib-search').value='';
+  document.getElementById('lib-category').value='all';
+  filterLibrary();
+  document.getElementById('lib-search').focus();
+}
+
+function closeLoadLibrary(){
+  document.getElementById('load-library-panel').style.display='none';
+}
+
+function filterLibrary(){
+  const q = document.getElementById('lib-search').value.toLowerCase().trim();
+  const cat = document.getElementById('lib-category').value;
+  const sysV = parseFloat(document.getElementById('sys-v').value)||110;
+
+  let filtered = LOAD_LIBRARY;
+  if(cat!=='all') filtered = filtered.filter(l=>l.cat===cat);
+  if(q) filtered = filtered.filter(l=>
+    l.desc.toLowerCase().includes(q) ||
+    l.cat.toLowerCase().includes(q) ||
+    l.note.toLowerCase().includes(q)
+  );
+
+  const el = document.getElementById('lib-results');
+  if(!filtered.length){
+    el.innerHTML='<div class="lib-empty">No loads match your search. Try different keywords.</div>';
+    return;
+  }
+
+  el.innerHTML = filtered.map((l,i)=>{
+    const typeLabel = {momentary:'Mom.',continuous:'Cont.',noncontinuous:'Non-cont.'}[l.type]||l.type;
+    const watts = l.watts || Math.round(l.amps * sysV);
+    return `<div class="lib-item" onclick="addLibLoad(${i},'${q}','${cat}')">
+      <span class="lib-cat lib-cat-${l.cat}">${l.cat}</span>
+      <span class="lib-name">${l.desc}<br><span style="font:400 10px var(--mono);color:var(--text3)">${l.note}</span></span>
+      <span class="lib-detail">${l.amps}A / ${watts}W / ${typeLabel} / ${l.dur>=1?l.dur+'min':Math.round(l.dur*60)+'s'}</span>
+      <button class="lib-add-btn">+ Add</button>
+    </div>`;
+  }).join('');
+}
+
+function addLibLoad(idx, q, cat){
+  let filtered = LOAD_LIBRARY;
+  if(cat!=='all') filtered = filtered.filter(l=>l.cat===cat);
+  if(q) filtered = filtered.filter(l=>
+    l.desc.toLowerCase().includes(q) ||
+    l.cat.toLowerCase().includes(q) ||
+    l.note.toLowerCase().includes(q)
+  );
+  const item = filtered[idx];
+  if(!item) return;
+
+  const qty = parseInt(document.getElementById('lib-qty').value)||1;
+  const sysV = parseFloat(document.getElementById('sys-v').value)||110;
+  const autonomy = parseFloat(document.getElementById('autonomy').value)||480;
+  const watts = item.watts || Math.round(item.amps * sysV);
+  const dur = item.type==='continuous' ? autonomy : item.dur;
+  const desc = qty>1 ? `${qty}x ${item.desc}` : item.desc;
+  const amps = +(item.amps * qty).toFixed(2);
+  const totalW = watts * qty;
+
+  addLoadSilent(desc, item.type, amps, totalW, 0, dur);
+  renderLoads();
+  calc();
+
+  const items = document.querySelectorAll('.lib-item');
+  if(items[idx]){
+    items[idx].style.borderColor='var(--amber)';
+    items[idx].style.background='rgba(232,168,56,0.08)';
+    setTimeout(()=>{items[idx].style.borderColor='';items[idx].style.background='';}, 600);
+  }
+}
+
+// ─── UI HELPERS ──────────────────────────────────────────
+function toggleCollapse(id){
+  const body = document.getElementById(id);
+  if(!body) return;
+  body.classList.toggle('open');
+  const toggle = body.previousElementSibling?.querySelector('.collapse-toggle') ||
+    body.closest('.card')?.querySelector('.collapse-toggle');
+  if(toggle) toggle.classList.toggle('open', body.classList.contains('open'));
+}
+
+function updateLiveStrip(){
+  const r = results;
+  if(!r||!r.selectedAh){
+    ['ls-ah','ls-cells','ls-strings','ls-kwh','ls-charger','ls-weight'].forEach(id=>{
+      const el=document.getElementById(id); if(el) el.textContent='--';
+    });
+    return;
+  }
+  const set = (id,v) => { const el=document.getElementById(id); if(el) el.textContent=v; };
+  set('ls-ah', r.selectedAh);
+  set('ls-cells', r.nCells);
+  set('ls-strings', r.nStrings);
+  set('ls-kwh', r.bankKwh.toFixed(1));
+  set('ls-charger', r.chargerRounded);
+  set('ls-weight', r.estWeight<1000 ? r.estWeight.toFixed(0)+'kg' : (r.estWeight/1000).toFixed(1)+'t');
+}
+
+// ─── INIT ────────────────────────────────────────────────
+function init(){
+  // Set today's date
+  const d=document.getElementById('proj-date');
+  if(d&&!d.value) d.value=new Date().toISOString().split('T')[0];
+  addPreset();
+  calc();
+}
+
+function onBattTypeChange(){
+  const t = document.getElementById('batt-type').value;
+  const d = BATT_DEFAULTS[t];
+  document.getElementById('float-vpc').value = d.float;
+  document.getElementById('eod-vpc').value = d.eod;
+}
+
+function onConfigModeChange(){
+  const mode = document.getElementById('config-mode').value;
+  const manual = mode==='manual';
+  document.getElementById('parallel-strings').disabled = !manual;
+  document.getElementById('ah-per-string').disabled = !manual;
+  document.getElementById('cells-per-string').disabled = !manual;
+  if(!manual){
+    document.getElementById('parallel-strings').value = 1;
+    document.getElementById('ah-per-string').value = 0;
+    document.getElementById('cells-per-string').value = 0;
+  }
+}
+
+// ─── TAB SWITCHING ───────────────────────────────────────
+function showTab(id){
+  const panes=['design','results','reference'];
+  document.querySelectorAll('.tab[role="tab"]').forEach((t,i)=>{
+    if(i>=panes.length) return;
+    const on = panes[i]===id;
+    t.classList.toggle('on',on);
+    t.setAttribute('aria-selected', on?'true':'false');
+  });
+  panes.forEach(p=>document.getElementById('pane-'+p).classList.toggle('on',p===id));
+  if(id==='results') renderAllResults();
+  if(id==='reference'){
+    const ref=document.getElementById('charge-mode');
+    if(ref) ref.value=secInputs.chargeMode||'cccv';
+    drawChargeCurve();renderChargeFormulas();
+  }
+}
+
+// ─── LOAD MANAGEMENT ─────────────────────────────────────
+function addLoad(desc='',type='continuous',amps=0,watts=0,start=0,dur=0){
+  loads.push({id:++loadId,desc,type,amps,watts,start,dur});
+  renderLoads();
+  calc();
+}
+
+function addPreset(){
+  loads=[];loadId=0;
+  // Typical substation duty cycle
+  addLoadSilent('CB tripping (all feeders)','momentary',150,0,0,1);
+  addLoadSilent('Continuous control & indication','continuous',5,0,0,480);
+  addLoadSilent('Emergency lighting','continuous',8,0,0,480);
+  addLoadSilent('Protection relays & RTU','continuous',3,0,0,480);
+  addLoadSilent('CB closing (restoration)','momentary',120,0,478,2);
+  renderLoads();
+  calc();
+}
+
+function addLoadSilent(desc,type,amps,watts,start,dur){
+  loads.push({id:++loadId,desc,type,amps,watts,start,dur});
+}
+
+function removeLoad(id){
+  loads=loads.filter(l=>l.id!==id);
+  renderLoads();
+  calc();
+}
+
+function clearLoads(){
+  loads=[];loadId=0;
+  renderLoads();
+  calc();
+}
+
+function updateLoad(id,field,val){
+  const l=loads.find(x=>x.id===id);
+  if(!l)return;
+  if(field==='amps'||field==='watts'||field==='start'||field==='dur') val=parseFloat(val)||0;
+  l[field]=val;
+  const sysV=parseFloat(document.getElementById('sys-v').value)||110;
+  if(field==='amps'&&l.amps>0) l.watts=Math.round(l.amps*sysV);
+  if(field==='watts'&&l.watts>0) l.amps=+(l.watts/sysV).toFixed(2);
+  renderLoads();
+  calc();
+}
+
+function renderLoads(){
+  const tb=document.getElementById('load-tbody');
+  let rows = loads.map(l=>`<tr>
+    <td><input value="${esc(l.desc)}" onchange="updateLoad(${l.id},'desc',this.value)" placeholder="Load description"></td>
+    <td><select onchange="updateLoad(${l.id},'type',this.value)">
+      <option value="continuous"${l.type==='continuous'?' selected':''}>Cont.</option>
+      <option value="noncontinuous"${l.type==='noncontinuous'?' selected':''}>Non-cont.</option>
+      <option value="momentary"${l.type==='momentary'?' selected':''}>Moment.</option>
+    </select></td>
+    <td><input type="number" value="${l.amps}" step="0.1" min="0" onchange="updateLoad(${l.id},'amps',this.value)"></td>
+    <td><input type="number" value="${l.watts}" step="1" min="0" onchange="updateLoad(${l.id},'watts',this.value)"></td>
+    <td><input type="number" value="${l.start}" step="1" min="0" onchange="updateLoad(${l.id},'start',this.value)"></td>
+    <td><input type="number" value="${l.dur}" step="1" min="1" onchange="updateLoad(${l.id},'dur',this.value)"></td>
+    <td><button class="del-btn" onclick="removeLoad(${l.id})" aria-label="Remove load ${l.desc}">×</button></td>
+  </tr>`).join('');
+
+  // Totals row
+  if(loads.length>0){
+    const contA = loads.filter(l=>l.type==='continuous').reduce((s,l)=>s+l.amps,0);
+    const contW = loads.filter(l=>l.type==='continuous').reduce((s,l)=>s+l.watts,0);
+    const momA = loads.filter(l=>l.type==='momentary').reduce((s,l)=>s+l.amps,0);
+    const momW = loads.filter(l=>l.type==='momentary').reduce((s,l)=>s+l.watts,0);
+    const ncA = loads.filter(l=>l.type==='noncontinuous').reduce((s,l)=>s+l.amps,0);
+    const ncW = loads.filter(l=>l.type==='noncontinuous').reduce((s,l)=>s+l.watts,0);
+    rows += `<tr style="background:var(--bg3);border-top:2px solid var(--amber)">
+      <td style="font:600 11px var(--mono);color:var(--amber)">${loads.length} loads total</td>
+      <td style="font:600 10px var(--mono);color:var(--text3)">Cont/NC/Mom</td>
+      <td style="font:600 12px var(--mono);color:var(--amber)">${contA.toFixed(1)} / ${ncA.toFixed(1)} / ${momA.toFixed(0)}</td>
+      <td style="font:600 12px var(--mono);color:var(--amber)">${contW} / ${ncW} / ${momW}</td>
+      <td colspan="3" style="font:500 10px var(--mono);color:var(--text3)">Peak: ${(contA+momA+ncA).toFixed(1)} A</td>
+    </tr>`;
+  }
+  tb.innerHTML=rows;
+}
+
+function esc(s){return (s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;')}
+
+// ─── TEMPERATURE CORRECTION (IEEE 485 Table 1) ──────────
+function getTempFactor(tempC){
+  if(tempC>=25) return 1.00; // conservative: don't credit above 25°C
+  if(tempC<=TEMP_TABLE[0][0]) return TEMP_TABLE[0][1];
+  for(let i=1;i<TEMP_TABLE.length;i++){
+    if(tempC<=TEMP_TABLE[i][0]){
+      const [t0,f0]=TEMP_TABLE[i-1],[t1,f1]=TEMP_TABLE[i];
+      return +(f0+(f1-f0)*(tempC-t0)/(t1-t0)).toFixed(3);
+    }
+  }
+  return 1.000;
+}
+
+// ─── MAIN CALCULATION ─────────────────────────────────────
+function calc(){
+  const sysV   = parseFloat(document.getElementById('sys-v').value)||110;
+  const vMin   = parseFloat(document.getElementById('sys-vmin').value)||105;
+  const vMax   = parseFloat(document.getElementById('sys-vmax').value)||140;
+  const battType = document.getElementById('batt-type').value;
+  const floatVpc = parseFloat(document.getElementById('float-vpc').value)||2.25;
+  const eodVpc   = parseFloat(document.getElementById('eod-vpc').value)||1.75;
+  const autonomy = parseFloat(document.getElementById('autonomy').value)||480;
+  const tempC    = parseFloat(document.getElementById('ambient-temp').value)||25;
+  const agingF   = parseFloat(document.getElementById('aging-factor').value)||1.25;
+  const designM  = (parseFloat(document.getElementById('design-margin').value)||15)/100;
+  const maxDoD   = (parseFloat(document.getElementById('max-dod').value)||80)/100;
+  const sysEff   = (parseFloat(document.getElementById('sys-eff').value)||95)/100;
+
+  // CONFIGURATION MODE
+  const configMode = document.getElementById('config-mode').value;
+  const manualStrings = parseInt(document.getElementById('parallel-strings').value)||1;
+  const manualAhPerStr = parseInt(document.getElementById('ah-per-string').value)||0;
+  const manualCellsPerStr = parseInt(document.getElementById('cells-per-string').value)||0;
+
+  // CELL COUNT (series) — determines voltage
+  const nCellsMax = Math.floor(vMax / floatVpc);
+  const nCellsMin = Math.ceil(vMin / eodVpc);
+  let nCells;
+  if(configMode==='manual' && manualCellsPerStr>0){
+    nCells = manualCellsPerStr;
+  } else {
+    nCells = nCellsMax; // typical: use max float constraint
+  }
+  const actualEodVpc = vMin / nCells;
+
+  // TEMPERATURE FACTOR
+  const tempFactor = getTempFactor(tempC);
+
+  // BUILD TIME-CURRENT PROFILE
+  const totalMin = autonomy;
+  // Aggregate loads at each minute boundary
+  const timePoints = new Set([0, totalMin]);
+  loads.forEach(l=>{
+    timePoints.add(l.start);
+    timePoints.add(Math.min(l.start+l.dur, totalMin));
+  });
+  const sorted = [...timePoints].sort((a,b)=>a-b).filter(t=>t<=totalMin);
+
+  // For each interval compute total current
+  let periods = [];
+  for(let i=0;i<sorted.length-1;i++){
+    const tStart=sorted[i], tEnd=sorted[i+1];
+    let totalA=0;
+    loads.forEach(l=>{
+      const lEnd=l.start+l.dur;
+      if(l.start<tEnd && lEnd>tStart){
+        totalA+=l.amps;
+      }
+    });
+    if(tEnd>tStart) periods.push({start:tStart,end:tEnd,dur:tEnd-tStart,amps:totalA});
+  }
+
+  // TOTAL Ah (simple Ah method)
+  let totalAh=0;
+  periods.forEach(p=>{totalAh += p.amps * (p.dur/60);});
+
+  // Continuous load (loads that span full autonomy)
+  let contA=0;
+  loads.forEach(l=>{if(l.type==='continuous')contA+=l.amps;});
+
+  // Peak current
+  let peakA=0;
+  periods.forEach(p=>{if(p.amps>peakA)peakA=p.amps;});
+
+  // CORRECTED CAPACITY (total bank requirement)
+  const ahDesign = totalAh / sysEff;
+  const ahDoD = ahDesign / maxDoD;
+  const ahAging = ahDoD * agingF;
+  const ahTemp = ahAging * tempFactor;
+  const ahMargin = ahTemp * (1+designM);
+  const requiredAh = Math.ceil(ahMargin);
+
+  // PARALLEL STRINGS & PER-STRING CAPACITY
+  let nStrings, ahPerString, selectedAh;
+  const stdSizes=[25,38,50,65,75,100,120,150,175,200,250,300,350,400,500,600,750,800,1000,1200,1500,2000,2500,3000,4000,5000];
+
+  if(configMode==='manual'){
+    nStrings = manualStrings;
+    const reqPerString = Math.ceil(requiredAh / nStrings);
+    if(manualAhPerStr>0){
+      ahPerString = manualAhPerStr;
+    } else {
+      ahPerString = stdSizes.find(s=>s>=reqPerString) || reqPerString;
+    }
+    selectedAh = ahPerString * nStrings; // total bank capacity
+  } else {
+    // Auto mode: try single string first, split if too large
+    const maxSingleString = (battType==='liion')?300:(battType==='nicd')?1200:3000;
+    if(requiredAh <= maxSingleString){
+      nStrings = 1;
+      ahPerString = stdSizes.find(s=>s>=requiredAh) || requiredAh;
+    } else {
+      // Find smallest number of strings where per-string Ah fits a standard size
+      nStrings = 2;
+      while(nStrings<=10){
+        const perStr = Math.ceil(requiredAh/nStrings);
+        const match = stdSizes.find(s=>s>=perStr);
+        if(match && match<=maxSingleString){break;}
+        nStrings++;
+      }
+      const perStr = Math.ceil(requiredAh/nStrings);
+      ahPerString = stdSizes.find(s=>s>=perStr) || perStr;
+    }
+    selectedAh = ahPerString * nStrings;
+    // Update the UI to reflect auto result
+    document.getElementById('parallel-strings').value = nStrings;
+    document.getElementById('ah-per-string').value = ahPerString;
+    document.getElementById('cells-per-string').value = nCells;
+  }
+
+  // Per-string current
+  const currentPerString = peakA / nStrings;
+
+  // CAPACITY CHECK: does selected bank meet requirement?
+  const capacityMarginPct = ((selectedAh - requiredAh)/requiredAh*100);
+  const capacityOk = selectedAh >= requiredAh;
+
+  // CHARGER SIZING
+  const rechargeH = parseFloat((document.getElementById('recharge-time')||{}).value)||8;
+  const rechargeEff = (parseFloat((document.getElementById('recharge-eff')||{}).value)||85)/100;
+  const chargerOF = parseFloat((document.getElementById('charger-oversize')||{}).value)||1.15;
+
+  // Charger must recharge one string (all strings charged in parallel by separate chargers, or single charger for single string)
+  const ahRemoved = totalAh; // Ah actually discharged from the bank
+  const ahRemovedPerString = ahRemoved / nStrings;
+  const rechargeCurrent = ahRemovedPerString / (rechargeH * rechargeEff);
+  const chargerCurrentPerStr = (rechargeCurrent + (contA/nStrings)) * chargerOF;
+  const chargerRoundedPerStr = Math.ceil(chargerCurrentPerStr/5)*5;
+  // Total charger if single charger for whole bank
+  const chargerCurrent = (ahRemoved / (rechargeH * rechargeEff) + contA) * chargerOF;
+  const chargerRounded = Math.ceil(chargerCurrent/5)*5;
+  const chargerPower = chargerRounded * nCells * floatVpc;
+
+  // TOTAL WEIGHT ESTIMATE (rough: ~25 kg/kWh for lead-acid, ~7 for Li-ion)
+  const nomCellV = BATT_DEFAULTS[battType].nom;
+  const bankKwh = (selectedAh * nCells * nomCellV)/1000;
+  const weightFactor = (battType==='liion')?7:(battType==='nicd')?12:25;
+  const estWeight = bankKwh * weightFactor;
+
+  // Total cell count
+  const totalCells = nCells * nStrings;
+
+  results = {
+    sysV, vMin, vMax, battType, floatVpc, eodVpc, autonomy, tempC,
+    nCells, nCellsMax, nCellsMin, actualEodVpc,
+    tempFactor, agingF, designM, maxDoD, sysEff,
+    totalAh, ahDesign, ahDoD, ahAging, ahTemp, ahMargin, requiredAh, selectedAh,
+    contA, peakA, periods,
+    rechargeH, rechargeCurrent, chargerCurrent, chargerRounded, chargerPower,
+    chargerRoundedPerStr,
+    bankKwh, estWeight, nStrings, ahPerString, totalCells,
+    currentPerString, capacityMarginPct, capacityOk, configMode,
+    nomCellV
+  };
+
+  // Update config summary
+  const csEl = document.getElementById('config-summary');
+  if(csEl){
+    const connDesc = nStrings===1
+      ? `<strong>${nCells} cells in series</strong> (single string) = ${(nCells*nomCellV).toFixed(0)}V nominal, ${ahPerString} Ah`
+      : `<strong>${nStrings} parallel strings</strong>, each with <strong>${nCells} cells in series</strong> = ${(nCells*nomCellV).toFixed(0)}V nominal, ${ahPerString} Ah/string, ${selectedAh} Ah total bank`;
+    const statusBadge = capacityOk
+      ? `<span class="badge badge-pass">OK (+${capacityMarginPct.toFixed(0)}%)</span>`
+      : `<span class="badge badge-fail">UNDERSIZED</span>`;
+    csEl.innerHTML = `${connDesc}<br>
+      <span style="color:var(--text3)">Total cells: ${totalCells} | Peak current/string: ${currentPerString.toFixed(1)} A | Bank capacity vs required: ${statusBadge}</span>`;
+  }
+
+  drawDutyCycle(periods, totalMin, peakA);
+  renderChargerResults();
+  updateLiveStrip();
+}
+
+// ─── DUTY CYCLE SVG ──────────────────────────────────────
+function drawDutyCycle(periods, totalMin, peakA){
+  const svg = document.getElementById('duty-cycle-svg');
+  const content = buildDutyCycleSVG(periods, totalMin, peakA);
+  if(svg) svg.innerHTML = content;
+}
+
+function buildDutyCycleSVG(periods, totalMin, peakA){
+  if(!periods||!periods.length||!peakA) return '<text x="350" y="100" text-anchor="middle" fill="#adb8cf" font-family="DM Mono" font-size="12">No loads</text>';
+
+  const W=700,H=200,ml=55,mr=20,mt=20,mb=35;
+  const pw=W-ml-mr, ph=H-mt-mb;
+  const maxA = peakA*1.15;
+
+  let html=`<defs>
+    <linearGradient id="dcg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e8a838" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#e8a838" stop-opacity="0.05"/>
+    </linearGradient>
+  </defs>`;
+
+  // Grid
+  const nGridY=5;
+  for(let i=0;i<=nGridY;i++){
+    const y=mt+ph*(i/nGridY);
+    const a=maxA*(1-i/nGridY);
+    html+=`<line x1="${ml}" y1="${y}" x2="${ml+pw}" y2="${y}" stroke="#323f60" stroke-width="0.5"/>`;
+    html+=`<text x="${ml-6}" y="${y+4}" text-anchor="end" fill="#adb8cf" font-family="DM Mono" font-size="9">${a.toFixed(0)}A</text>`;
+  }
+
+  // Time axis labels
+  const nGridX = Math.min(8, Math.ceil(totalMin/60));
+  for(let i=0;i<=nGridX;i++){
+    const x=ml+pw*(i/nGridX);
+    const t=totalMin*(i/nGridX);
+    html+=`<line x1="${x}" y1="${mt}" x2="${x}" y2="${mt+ph}" stroke="#323f60" stroke-width="0.5"/>`;
+    html+=`<text x="${x}" y="${H-mb+15}" text-anchor="middle" fill="#adb8cf" font-family="DM Mono" font-size="9">${t>=60?(t/60).toFixed(0)+'h':t.toFixed(0)+'m'}</text>`;
+  }
+
+  // Axes
+  html+=`<line x1="${ml}" y1="${mt}" x2="${ml}" y2="${mt+ph}" stroke="#adb8cf" stroke-width="1"/>`;
+  html+=`<line x1="${ml}" y1="${mt+ph}" x2="${ml+pw}" y2="${mt+ph}" stroke="#adb8cf" stroke-width="1"/>`;
+
+  // Bars
+  periods.forEach(p=>{
+    const x1=ml+pw*(p.start/totalMin);
+    const x2=ml+pw*(p.end/totalMin);
+    const barH=ph*(p.amps/maxA);
+    const y=mt+ph-barH;
+    html+=`<rect x="${x1}" y="${y}" width="${x2-x1}" height="${barH}" fill="url(#dcg)" stroke="#e8a838" stroke-width="1.5" rx="1"/>`;
+    if(x2-x1>30){
+      html+=`<text x="${(x1+x2)/2}" y="${y-4}" text-anchor="middle" fill="#e8a838" font-family="DM Mono" font-size="9" font-weight="600">${p.amps.toFixed(1)}A</text>`;
+    }
+  });
+
+  // Labels
+  html+=`<text x="${ml+pw/2}" y="${H-2}" text-anchor="middle" fill="#adb8cf" font-family="DM Mono" font-size="10">Time</text>`;
+  html+=`<text x="12" y="${mt+ph/2}" text-anchor="middle" fill="#adb8cf" font-family="DM Mono" font-size="10" transform="rotate(-90,12,${mt+ph/2})">Current (A)</text>`;
+
+  return html;
+}
+
+// ─── CHARGER RESULTS ─────────────────────────────────────
+function renderChargerResults(){
+  // No-op: charger results now rendered by renderChargerSection() in Results tab
+}
+
+// ─── CHARGING CURVE PROFILES ─────────────────────────────
+const CHARGE_MODES = {
+  cc: {
+    label: 'CC — Constant Current',
+    stages: ['Constant Current'],
+    genV: (t,chem) => {
+      const vStart = chem==='liion'?3.0:chem==='nicd'?1.10:1.75;
+      const vEnd = chem==='liion'?3.65:chem==='nicd'?1.55:2.40;
+      return vStart + (vEnd-vStart)*(1-Math.exp(-3*t));
+    },
+    genI: (t,chem) => 1.0,
+    genSoC: (t) => Math.min(1, t*1.05)
+  },
+  cv: {
+    label: 'CV — Constant Voltage (Float)',
+    stages: ['Constant Voltage'],
+    genV: (t,chem) => {
+      const vFloat = chem==='liion'?3.65:chem==='nicd'?1.42:2.27;
+      return vFloat;
+    },
+    genI: (t,chem) => Math.max(0.02, Math.exp(-3.5*t)),
+    genSoC: (t) => Math.min(1, 1-Math.exp(-3*t))
+  },
+  cccv: {
+    label: 'CC-CV — Two Stage',
+    stages: ['Bulk (CC)', 'Absorption (CV)'],
+    genV: (t,chem) => {
+      const vStart = chem==='liion'?3.0:chem==='nicd'?1.10:1.75;
+      const vAbs = chem==='liion'?3.65:chem==='nicd'?1.55:2.40;
+      if(t<0.55) return vStart+(vAbs-vStart)*(t/0.55);
+      return vAbs;
+    },
+    genI: (t,chem) => {
+      if(t<0.55) return 1.0;
+      return Math.max(0.03, Math.exp(-4*(t-0.55)));
+    },
+    genSoC: (t) => {
+      if(t<0.55) return t*1.3;
+      return Math.min(1, 0.72 + 0.28*(1-Math.exp(-4*(t-0.55))));
+    }
+  },
+  iuou: {
+    label: 'IUoU — Three Stage (DIN 41773)',
+    stages: ['Bulk (I)', 'Absorption (Uo)', 'Float (U)'],
+    genV: (t,chem) => {
+      const vStart = chem==='liion'?3.0:chem==='nicd'?1.10:1.75;
+      const vAbs = chem==='liion'?3.65:chem==='nicd'?1.55:2.40;
+      const vFloat = chem==='liion'?3.40:chem==='nicd'?1.42:2.27;
+      if(t<0.40) return vStart+(vAbs-vStart)*(t/0.40);
+      if(t<0.70) return vAbs;
+      const tf = (t-0.70)/0.30;
+      return vAbs - (vAbs-vFloat)*Math.min(1,tf*1.5);
+    },
+    genI: (t,chem) => {
+      if(t<0.40) return 1.0;
+      if(t<0.70) return Math.max(0.08, 1.0*Math.exp(-5*(t-0.40)));
+      return Math.max(0.02, 0.08*Math.exp(-3*(t-0.70)));
+    },
+    genSoC: (t) => {
+      if(t<0.40) return t*1.75;
+      if(t<0.70) return 0.70 + 0.25*(1-Math.exp(-5*(t-0.40)));
+      return Math.min(1, 0.95 + 0.05*(1-Math.exp(-5*(t-0.70))));
+    }
+  },
+  iuia: {
+    label: 'IUIa — Equalise Charge',
+    stages: ['Bulk (I)', 'Absorption (U)', 'Equalise (Ia)', 'Float (U)'],
+    genV: (t,chem) => {
+      const vStart = chem==='liion'?3.0:chem==='nicd'?1.10:1.75;
+      const vAbs = chem==='liion'?3.65:chem==='nicd'?1.55:2.40;
+      const vEq = chem==='liion'?3.65:chem==='nicd'?1.65:2.58;
+      const vFloat = chem==='liion'?3.40:chem==='nicd'?1.42:2.27;
+      if(t<0.30) return vStart+(vAbs-vStart)*(t/0.30);
+      if(t<0.55) return vAbs;
+      if(t<0.75) return vAbs+(vEq-vAbs)*((t-0.55)/0.20);
+      if(t<0.85) return vEq;
+      return vEq-(vEq-vFloat)*Math.min(1,(t-0.85)/0.12);
+    },
+    genI: (t,chem) => {
+      if(t<0.30) return 1.0;
+      if(t<0.55) return Math.max(0.10, Math.exp(-5*(t-0.30)));
+      if(t<0.75) return 0.20;
+      if(t<0.85) return 0.20;
+      return Math.max(0.02, 0.10*Math.exp(-4*(t-0.85)));
+    },
+    genSoC: (t) => {
+      if(t<0.30) return t*2.0;
+      if(t<0.55) return 0.60 + 0.25*(1-Math.exp(-5*(t-0.30)));
+      if(t<0.85) return 0.85 + 0.10*((t-0.55)/0.30);
+      return Math.min(1, 0.95 + 0.05*(1-Math.exp(-6*(t-0.85))));
+    }
+  },
+  pulse: {
+    label: 'Pulse Charging',
+    stages: ['Pulse On', 'Rest', 'Pulse On (repeating)'],
+    genV: (t,chem) => {
+      const vStart = chem==='liion'?3.0:chem==='nicd'?1.10:1.75;
+      const vEnd = chem==='liion'?3.65:chem==='nicd'?1.55:2.40;
+      const base = vStart + (vEnd-vStart)*t;
+      const pulseT = (t*30) % 1;
+      const ripple = pulseT<0.7 ? 0.04 : -0.02;
+      return base + ripple;
+    },
+    genI: (t,chem) => {
+      const base = Math.max(0.05, 1.0 - 0.7*t);
+      const pulseT = (t*30) % 1;
+      return pulseT<0.7 ? base : 0;
+    },
+    genSoC: (t) => Math.min(1, t*1.02)
+  }
+};
+
+// ─── CHARGE MODE SYNC (Results ↔ Reference) ─────────────
+function syncChargeMode(){
+  const sel = document.getElementById('charge-mode-results');
+  const ref = document.getElementById('charge-mode');
+  if(sel && ref) ref.value = sel.value;
+  secSave();
+}
+
+function drawMiniChargeCurve(){
+  const svg = document.getElementById('mini-charge-curve');
+  if(!svg) return;
+  const mode = secInputs.chargeMode || 'cccv';
+  const battType = (document.getElementById('batt-type')||{}).value || 'vrla';
+  const chem = {vla:'la',vrla:'la',nicd:'nicd',liion:'liion'}[battType]||'la';
+  const profile = CHARGE_MODES[mode];
+  if(!profile){svg.innerHTML='';return;}
+
+  const lbl = document.getElementById('mini-curve-label');
+  if(lbl) lbl.textContent = profile.label;
+
+  const W=700,H=160,ml=45,mr=45,mt=14,mb=24;
+  const pw=W-ml-mr,ph=H-mt-mb;
+  const nPts=150;
+
+  let vData=[],iData=[],vMin=99,vMax=0,iMax=0;
+  for(let n=0;n<=nPts;n++){
+    const t=n/nPts;
+    const v=profile.genV(t,chem), i=profile.genI(t,chem);
+    vData.push(v);iData.push(i);
+    if(v<vMin)vMin=v;if(v>vMax)vMax=v;if(i>iMax)iMax=i;
+  }
+  vMin=Math.floor(vMin*10)/10-0.05;vMax=Math.ceil(vMax*10)/10+0.05;
+  if(iMax<0.1)iMax=1;
+
+  let html=`<defs>
+    <linearGradient id="mvg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#e8a838" stop-opacity="0.12"/><stop offset="100%" stop-color="#e8a838" stop-opacity="0"/></linearGradient>
+    <linearGradient id="mig" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4a9eff" stop-opacity="0.12"/><stop offset="100%" stop-color="#4a9eff" stop-opacity="0"/></linearGradient>
+  </defs>`;
+
+  // Light grid
+  for(let i=0;i<=4;i++){
+    const y=mt+ph*(i/4);
+    html+=`<line x1="${ml}" y1="${y}" x2="${ml+pw}" y2="${y}" stroke="#323f60" stroke-width="0.5"/>`;
+    const vVal=vMax-(vMax-vMin)*(i/4);
+    html+=`<text x="${ml-4}" y="${y+3}" text-anchor="end" fill="#e8a838" font-family="DM Mono" font-size="7">${vVal.toFixed(2)}</text>`;
+    const iVal=iMax*(1-i/4);
+    html+=`<text x="${ml+pw+4}" y="${y+3}" fill="#4a9eff" font-family="DM Mono" font-size="7">${(iVal*100).toFixed(0)}%</text>`;
+  }
+
+  // Stage labels for multi-stage modes
+  if(mode==='cccv'){
+    const bx=ml+pw*0.55;
+    html+=`<line x1="${bx}" y1="${mt}" x2="${bx}" y2="${mt+ph}" stroke="#e8a838" stroke-width="0.5" stroke-dasharray="3,2" opacity="0.4"/>`;
+    html+=`<text x="${ml+pw*0.27}" y="${mt+9}" text-anchor="middle" fill="#e8a838" font-family="DM Mono" font-size="8" font-weight="600">BULK</text>`;
+    html+=`<text x="${ml+pw*0.77}" y="${mt+9}" text-anchor="middle" fill="#4a9eff" font-family="DM Mono" font-size="8" font-weight="600">ABSORB</text>`;
+  } else if(mode==='iuou'){
+    const b1=ml+pw*0.40,b2=ml+pw*0.70;
+    html+=`<line x1="${b1}" y1="${mt}" x2="${b1}" y2="${mt+ph}" stroke="#e8a838" stroke-width="0.5" stroke-dasharray="3,2" opacity="0.4"/>`;
+    html+=`<line x1="${b2}" y1="${mt}" x2="${b2}" y2="${mt+ph}" stroke="#4a9eff" stroke-width="0.5" stroke-dasharray="3,2" opacity="0.4"/>`;
+    html+=`<text x="${ml+pw*0.20}" y="${mt+9}" text-anchor="middle" fill="#e8a838" font-family="DM Mono" font-size="7" font-weight="600">BULK</text>`;
+    html+=`<text x="${ml+pw*0.55}" y="${mt+9}" text-anchor="middle" fill="#4a9eff" font-family="DM Mono" font-size="7" font-weight="600">ABSORB</text>`;
+    html+=`<text x="${ml+pw*0.85}" y="${mt+9}" text-anchor="middle" fill="#4a9eff" font-family="DM Mono" font-size="7" font-weight="600">FLOAT</text>`;
+  } else if(mode==='iuia'){
+    const b1=ml+pw*0.30,b2=ml+pw*0.55,b3=ml+pw*0.75,b4=ml+pw*0.85;
+    [b1,b2,b3,b4].forEach(bx=>{html+=`<line x1="${bx}" y1="${mt}" x2="${bx}" y2="${mt+ph}" stroke="#323f60" stroke-width="0.5" stroke-dasharray="3,2"/>`;});
+    html+=`<text x="${ml+pw*0.15}" y="${mt+9}" text-anchor="middle" fill="#e8a838" font-family="DM Mono" font-size="6" font-weight="600">BULK</text>`;
+    html+=`<text x="${ml+pw*0.42}" y="${mt+9}" text-anchor="middle" fill="#4a9eff" font-family="DM Mono" font-size="6" font-weight="600">ABS</text>`;
+    html+=`<text x="${ml+pw*0.65}" y="${mt+9}" text-anchor="middle" fill="#4a9eff" font-family="DM Mono" font-size="6" font-weight="600">EQ</text>`;
+    html+=`<text x="${ml+pw*0.92}" y="${mt+9}" text-anchor="middle" fill="#a87bef" font-family="DM Mono" font-size="6" font-weight="600">FLOAT</text>`;
+  }
+
+  // Build paths
+  function mkPath(data,yMin,yMax,color,gId){
+    let pts=[];
+    for(let n=0;n<=nPts;n++){
+      const x=ml+pw*(n/nPts);
+      const y=mt+ph*(1-(data[n]-yMin)/(yMax-yMin));
+      pts.push(`${x.toFixed(1)},${Math.max(mt,Math.min(mt+ph,y)).toFixed(1)}`);
+    }
+    let s=`<polyline points="${pts.join(' ')}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round"/>`;
+    if(gId) s+=`<polygon points="${pts.join(' ')} ${ml+pw},${mt+ph} ${ml},${mt+ph}" fill="url(#${gId})"/>`;
+    return s;
+  }
+  html+=mkPath(vData,vMin,vMax,'#e8a838','mvg');
+  html+=mkPath(iData,0,iMax,'#4a9eff','mig');
+
+  // Legend
+  const ly=H-6;
+  html+=`<circle cx="${ml+10}" cy="${ly}" r="3" fill="#e8a838"/><text x="${ml+17}" y="${ly+3}" fill="#e8a838" font-family="DM Mono" font-size="8">Voltage</text>`;
+  html+=`<circle cx="${ml+80}" cy="${ly}" r="3" fill="#4a9eff"/><text x="${ml+87}" y="${ly+3}" fill="#4a9eff" font-family="DM Mono" font-size="8">Current</text>`;
+  html+=`<text x="${ml+pw}" y="${ly+3}" text-anchor="end" fill="#adb8cf" font-family="DM Mono" font-size="8">See Reference tab for formulas</text>`;
+
+  svg.innerHTML=html;
+}
+
+function drawChargeCurve(){
+  const svg = document.getElementById('charge-curve-svg');
+  const mode = document.getElementById('charge-mode').value;
+  const chem = document.getElementById('charge-chem').value;
+  const profile = CHARGE_MODES[mode];
+
+  document.getElementById('curve-mode-label').textContent = profile.label;
+
+  const W=700, H=300, ml=52, mr=52, mt=25, mb=40;
+  const pw=W-ml-mr, ph=H-mt-mb;
+  const nPts=200;
+
+  // Generate data
+  let vData=[], iData=[], socData=[];
+  let vMin=99, vMax=0, iMax=0;
+  for(let n=0;n<=nPts;n++){
+    const t=n/nPts;
+    const v = profile.genV(t,chem);
+    const i = profile.genI(t,chem);
+    const s = profile.genSoC(t);
+    vData.push(v); iData.push(i); socData.push(s);
+    if(v<vMin) vMin=v; if(v>vMax) vMax=v;
+    if(i>iMax) iMax=i;
+  }
+  vMin = Math.floor(vMin*10)/10 - 0.05;
+  vMax = Math.ceil(vMax*10)/10 + 0.05;
+  if(iMax<0.1) iMax=1;
+
+  let html = `<defs>
+    <linearGradient id="vGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e8a838" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#e8a838" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="iGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4a9eff" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#4a9eff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="sGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3ecf8e" stop-opacity="0.10"/>
+      <stop offset="100%" stop-color="#3ecf8e" stop-opacity="0"/>
+    </linearGradient>
+  </defs>`;
+
+  // Grid
+  for(let i=0;i<=5;i++){
+    const y=mt+ph*(i/5);
+    html+=`<line x1="${ml}" y1="${y}" x2="${ml+pw}" y2="${y}" stroke="#323f60" stroke-width="0.5"/>`;
+    // Voltage axis (left)
+    const vVal = vMax - (vMax-vMin)*(i/5);
+    html+=`<text x="${ml-5}" y="${y+3}" text-anchor="end" fill="#e8a838" font-family="DM Mono" font-size="8">${vVal.toFixed(2)}</text>`;
+    // Current/SoC axis (right)
+    const iVal = iMax*(1-i/5);
+    html+=`<text x="${ml+pw+5}" y="${y+3}" fill="#4a9eff" font-family="DM Mono" font-size="8">${(iVal*100).toFixed(0)}%</text>`;
+  }
+
+  // Time axis
+  for(let i=0;i<=8;i++){
+    const x=ml+pw*(i/8);
+    const pct=Math.round(i/8*100);
+    html+=`<line x1="${x}" y1="${mt}" x2="${x}" y2="${mt+ph}" stroke="#323f60" stroke-width="0.5"/>`;
+    html+=`<text x="${x}" y="${H-mb+14}" text-anchor="middle" fill="#adb8cf" font-family="DM Mono" font-size="8">${pct}%</text>`;
+  }
+
+  // Axes
+  html+=`<line x1="${ml}" y1="${mt}" x2="${ml}" y2="${mt+ph}" stroke="#adb8cf" stroke-width="1"/>`;
+  html+=`<line x1="${ml+pw}" y1="${mt}" x2="${ml+pw}" y2="${mt+ph}" stroke="#adb8cf" stroke-width="1"/>`;
+  html+=`<line x1="${ml}" y1="${mt+ph}" x2="${ml+pw}" y2="${mt+ph}" stroke="#adb8cf" stroke-width="1"/>`;
+
+  // Stage boundaries
+  const stageColors = ['#e8a838','#4a9eff','#4a9eff','#a87bef'];
+  if(mode==='cccv'){
+    const bx = ml+pw*0.55;
+    html+=`<line x1="${bx}" y1="${mt}" x2="${bx}" y2="${mt+ph}" stroke="#e8a838" stroke-width="1" stroke-dasharray="4,3" opacity="0.5"/>`;
+    html+=`<text x="${ml+pw*0.27}" y="${mt+12}" text-anchor="middle" fill="#e8a838" font-family="DM Mono" font-size="9" font-weight="600">BULK (CC)</text>`;
+    html+=`<text x="${ml+pw*0.77}" y="${mt+12}" text-anchor="middle" fill="#4a9eff" font-family="DM Mono" font-size="9" font-weight="600">ABSORPTION (CV)</text>`;
+  } else if(mode==='iuou'){
+    const b1=ml+pw*0.40, b2=ml+pw*0.70;
+    html+=`<line x1="${b1}" y1="${mt}" x2="${b1}" y2="${mt+ph}" stroke="#e8a838" stroke-width="1" stroke-dasharray="4,3" opacity="0.5"/>`;
+    html+=`<line x1="${b2}" y1="${mt}" x2="${b2}" y2="${mt+ph}" stroke="#4a9eff" stroke-width="1" stroke-dasharray="4,3" opacity="0.5"/>`;
+    html+=`<text x="${ml+pw*0.20}" y="${mt+12}" text-anchor="middle" fill="#e8a838" font-family="DM Mono" font-size="9" font-weight="600">BULK (I)</text>`;
+    html+=`<text x="${ml+pw*0.55}" y="${mt+12}" text-anchor="middle" fill="#4a9eff" font-family="DM Mono" font-size="9" font-weight="600">ABSORB (Uo)</text>`;
+    html+=`<text x="${ml+pw*0.85}" y="${mt+12}" text-anchor="middle" fill="#4a9eff" font-family="DM Mono" font-size="9" font-weight="600">FLOAT (U)</text>`;
+  } else if(mode==='iuia'){
+    const b1=ml+pw*0.30, b2=ml+pw*0.55, b3=ml+pw*0.75, b4=ml+pw*0.85;
+    [b1,b2,b3,b4].forEach((bx,i)=>{
+      html+=`<line x1="${bx}" y1="${mt}" x2="${bx}" y2="${mt+ph}" stroke="${stageColors[i]||'#adb8cf'}" stroke-width="1" stroke-dasharray="4,3" opacity="0.4"/>`;
+    });
+    html+=`<text x="${ml+pw*0.15}" y="${mt+12}" text-anchor="middle" fill="#e8a838" font-family="DM Mono" font-size="8" font-weight="600">BULK</text>`;
+    html+=`<text x="${ml+pw*0.42}" y="${mt+12}" text-anchor="middle" fill="#4a9eff" font-family="DM Mono" font-size="8" font-weight="600">ABSORB</text>`;
+    html+=`<text x="${ml+pw*0.65}" y="${mt+12}" text-anchor="middle" fill="#4a9eff" font-family="DM Mono" font-size="8" font-weight="600">EQUAL.</text>`;
+    html+=`<text x="${ml+pw*0.92}" y="${mt+12}" text-anchor="middle" fill="#a87bef" font-family="DM Mono" font-size="8" font-weight="600">FLOAT</text>`;
+  }
+
+  // Build path strings
+  function buildPath(data, yMin, yMax, color, fillId){
+    let pts=[];
+    for(let n=0;n<=nPts;n++){
+      const x = ml + pw*(n/nPts);
+      const y = mt + ph * (1 - (data[n]-yMin)/(yMax-yMin));
+      pts.push(`${x},${y}`);
+    }
+    let s = `<polyline points="${pts.join(' ')}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round"/>`;
+    if(fillId){
+      s += `<polygon points="${pts.join(' ')} ${ml+pw},${mt+ph} ${ml},${mt+ph}" fill="url(#${fillId})"/>`;
+    }
+    return s;
+  }
+
+  // SoC fill area (green, behind others)
+  html += buildPath(socData, 0, 1, '#3ecf8e', 'sGrad');
+  // Voltage curve (amber)
+  html += buildPath(vData, vMin, vMax, '#e8a838', 'vGrad');
+  // Current curve (teal)
+  html += buildPath(iData, 0, iMax, '#4a9eff', 'iGrad');
+
+  // Legend
+  const legY = H - 12;
+  html+=`<circle cx="${ml+10}" cy="${legY}" r="4" fill="#e8a838"/>`;
+  html+=`<text x="${ml+18}" y="${legY+3}" fill="#e8a838" font-family="DM Mono" font-size="9">Voltage (V/cell)</text>`;
+  html+=`<circle cx="${ml+140}" cy="${legY}" r="4" fill="#4a9eff"/>`;
+  html+=`<text x="${ml+148}" y="${legY+3}" fill="#4a9eff" font-family="DM Mono" font-size="9">Current (% of Imax)</text>`;
+  html+=`<circle cx="${ml+300}" cy="${legY}" r="4" fill="#3ecf8e"/>`;
+  html+=`<text x="${ml+308}" y="${legY+3}" fill="#3ecf8e" font-family="DM Mono" font-size="9">State of Charge (%)</text>`;
+
+  // Axis labels
+  html+=`<text x="14" y="${mt+ph/2}" text-anchor="middle" fill="#e8a838" font-family="DM Mono" font-size="9" transform="rotate(-90,14,${mt+ph/2})">V / cell</text>`;
+  html+=`<text x="${W-10}" y="${mt+ph/2}" text-anchor="middle" fill="#4a9eff" font-family="DM Mono" font-size="9" transform="rotate(90,${W-10},${mt+ph/2})">I / SoC %</text>`;
+  html+=`<text x="${ml+pw/2}" y="${H-1}" text-anchor="middle" fill="#adb8cf" font-family="DM Mono" font-size="9">Charge Progress (%)</text>`;
+
+  svg.innerHTML = html;
+}
+
+// ─── CHARGING FORMULAS ───────────────────────────────────
+function renderChargeFormulas(){
+  const mode = document.getElementById('charge-mode').value;
+  const chem = document.getElementById('charge-chem').value;
+  const el = document.getElementById('charge-formulas-body');
+
+  const chemLabel = {la:'Lead-Acid',nicd:'NiCd',liion:'Li-ion'}[chem];
+  const vFloat = {la:'2.25-2.30',nicd:'1.40-1.42',liion:'3.35-3.45'}[chem];
+  const vAbs = {la:'2.35-2.45',nicd:'1.50-1.55',liion:'3.60-3.65'}[chem];
+  const vEq = {la:'2.50-2.58',nicd:'1.60-1.65',liion:'N/A (not used)'}[chem];
+
+  const formulas = {
+    cc: `
+      <div class="formula-block">
+        <h4><span class="stage-badge stage-1">STAGE 1</span>Constant Current (CC)</h4>
+        <p>The charger delivers a fixed current throughout the entire charge cycle. Voltage rises as the battery charges, reaching the gassing voltage at approximately 80% SoC.</p>
+        <div class="formula">t_charge = C_Ah / (I_charge x n_eff)</div>
+        <div class="var-list">
+          <span>t_charge</span> = charging time (hours)<br>
+          <span>C_Ah</span> = Ah to be restored<br>
+          <span>I_charge</span> = constant charge current (A) — typically C/10 to C/5<br>
+          <span>n_eff</span> = charge efficiency (0.85 for ${chemLabel})
+        </div>
+        <div class="formula">V(t) = V_initial + (V_gassing - V_initial) x (1 - e^(-t/tau))</div>
+        <div class="var-list">
+          <span>V_gassing</span> = ${vAbs} V/cell for ${chemLabel}<br>
+          <span>tau</span> = time constant dependent on battery chemistry and state of health
+        </div>
+        <p style="margin-top:8px;color:var(--text3)"><strong>Application:</strong> NiCd batteries (IEEE 1106), simple chargers. Risk of overcharge if not timer-limited.</p>
+      </div>`,
+    cv: `
+      <div class="formula-block">
+        <h4><span class="stage-badge stage-2">SINGLE STAGE</span>Constant Voltage (Float)</h4>
+        <p>The charger maintains a fixed voltage. Current starts high and exponentially decays as the battery reaches full charge. This is the standard float maintenance mode for stationary batteries.</p>
+        <div class="formula">I(t) = (V_float - V_batt(t)) / R_internal</div>
+        <div class="formula">I(t) = I_initial x e^(-t/tau)</div>
+        <div class="var-list">
+          <span>V_float</span> = float voltage = ${vFloat} V/cell for ${chemLabel}<br>
+          <span>R_internal</span> = battery internal resistance (ohms)<br>
+          <span>I_initial</span> = initial inrush current (limited by charger to C/5 max)<br>
+          <span>tau</span> = R x C time constant of the battery
+        </div>
+        <div class="formula">t_95% = 3 x tau (to reach 95% SoC)</div>
+        <p style="margin-top:8px;color:var(--text3)"><strong>Application:</strong> Float maintenance per IEEE 450/1188. Not suitable for rapid recharge from deep discharge.</p>
+      </div>`,
+    cccv: `
+      <div class="formula-block">
+        <h4><span class="stage-badge stage-1">STAGE 1</span>Bulk Charge — Constant Current (CC)</h4>
+        <p>Charger delivers maximum current (typically C/5 to C/3). Battery voltage rises linearly until it reaches the absorption voltage set-point.</p>
+        <div class="formula">t_bulk = (SoC_target - SoC_initial) x C_Ah / (I_bulk x n_eff)</div>
+        <div class="formula">V(t) = V_start + (V_abs - V_start) x (t / t_bulk)</div>
+        <div class="var-list">
+          <span>I_bulk</span> = max charge current (A) — charger current-limited<br>
+          <span>V_abs</span> = absorption voltage = ${vAbs} V/cell<br>
+          <span>SoC_target</span> = ~70-80% at transition to CV stage
+        </div>
+      </div>
+      <div class="formula-block">
+        <h4><span class="stage-badge stage-2">STAGE 2</span>Absorption — Constant Voltage (CV)</h4>
+        <p>Voltage is held at the absorption set-point. Current decays exponentially as the battery approaches full charge. Transition to float typically occurs when current drops below C/50 to C/100.</p>
+        <div class="formula">I(t) = I_transition x e^(-t/tau)</div>
+        <div class="formula">t_abs = -tau x ln(I_cutoff / I_transition)</div>
+        <div class="var-list">
+          <span>I_transition</span> = current at CC-to-CV changeover<br>
+          <span>I_cutoff</span> = current threshold to end absorption (C/50 to C/100)<br>
+          <span>tau</span> = battery RC time constant during absorption
+        </div>
+        <p style="margin-top:8px;color:var(--text3)"><strong>Application:</strong> Most common for VRLA, Li-ion (per IEEE 485/946). Standard for stationary UPS and substation batteries.</p>
+      </div>`,
+    iuou: `
+      <div class="formula-block">
+        <h4><span class="stage-badge stage-1">STAGE 1 (I)</span>Bulk — Constant Current</h4>
+        <p>Maximum current applied until battery voltage reaches the upper voltage limit (Uo). Typically 70-80% of capacity is restored in this stage.</p>
+        <div class="formula">t_I = 0.7 x C_Ah / (I_charge x n_eff)</div>
+        <div class="var-list">
+          <span>I_charge</span> = bulk current (typically 0.1C to 0.2C for stationary)<br>
+          <span>Uo</span> = upper voltage limit = ${vAbs} V/cell
+        </div>
+      </div>
+      <div class="formula-block">
+        <h4><span class="stage-badge stage-2">STAGE 2 (Uo)</span>Absorption — Constant Voltage</h4>
+        <p>Voltage held at Uo. Current tapers as battery equalises internally. Stage ends when current drops below a threshold (typically 2-5% of I_charge).</p>
+        <div class="formula">I(t) = I_peak x e^(-t/tau)</div>
+        <div class="formula">End condition: I(t) &lt; 0.02 x C_Ah</div>
+      </div>
+      <div class="formula-block">
+        <h4><span class="stage-badge stage-3">STAGE 3 (U)</span>Float — Reduced Constant Voltage</h4>
+        <p>Voltage reduced to float level to maintain full charge without gassing or water loss. This is the long-term maintenance mode per IEEE 450/1188.</p>
+        <div class="formula">V_float = ${vFloat} V/cell</div>
+        <div class="formula">I_float = typically 1-5 mA/Ah (self-discharge compensation)</div>
+        <p style="margin-top:8px;color:var(--text3)"><strong>Application:</strong> DIN 41773 standard. Preferred for vented lead-acid in European substations and telecom. Minimises water loss and extends battery life.</p>
+      </div>`,
+    iuia: `
+      <div class="formula-block">
+        <h4><span class="stage-badge stage-1">STAGE 1 (I)</span>Bulk — Constant Current</h4>
+        <p>Maximum current applied until battery reaches absorption voltage.</p>
+        <div class="formula">t_I = 0.6 x C_Ah / (I_charge x n_eff)</div>
+      </div>
+      <div class="formula-block">
+        <h4><span class="stage-badge stage-2">STAGE 2 (U)</span>Absorption — Constant Voltage</h4>
+        <p>Voltage held at absorption limit. Current tapers naturally.</p>
+        <div class="formula">V_abs = ${vAbs} V/cell</div>
+      </div>
+      <div class="formula-block">
+        <h4><span class="stage-badge stage-3">STAGE 3 (Ia)</span>Equalise — Controlled Overcharge</h4>
+        <p>A controlled low current is applied at elevated voltage to equalise cell voltages across the string. This corrects cell imbalance, reverses sulphation in lead-acid cells, and restores capacity.</p>
+        <div class="formula">V_equalise = ${vEq} V/cell</div>
+        <div class="formula">I_equalise = 0.03C to 0.05C</div>
+        <div class="formula">Duration = 2 to 8 hours (per IEEE 450 / manufacturer)</div>
+        <div class="var-list">
+          <span>Frequency:</span> Every 3-6 months for vented lead-acid<br>
+          <span>Caution:</span> Not suitable for VRLA (risk of thermal runaway) or Li-ion
+        </div>
+      </div>
+      <div class="formula-block">
+        <h4><span class="stage-badge stage-4">STAGE 4 (U)</span>Float — Maintenance Voltage</h4>
+        <p>Voltage reduced to float level for long-term maintenance. Per IEEE 450, float voltage should be monitored and pilot cells checked regularly.</p>
+        <div class="formula">V_float = ${vFloat} V/cell</div>
+        <p style="margin-top:8px;color:var(--text3)"><strong>Application:</strong> Vented lead-acid batteries requiring periodic equalisation per IEEE 450. Typical in power stations and large substations.</p>
+      </div>`,
+    pulse: `
+      <div class="formula-block">
+        <h4><span class="stage-badge stage-1">PULSE ON</span>Current Pulse</h4>
+        <p>High current pulses are applied for a fixed duration (typically 70-90% duty cycle), followed by a rest period. The rest period allows ions to diffuse, reducing concentration polarisation and heat build-up.</p>
+        <div class="formula">I_avg = I_peak x D (duty cycle)</div>
+        <div class="formula">t_charge = C_Ah / (I_avg x n_eff)</div>
+        <div class="var-list">
+          <span>I_peak</span> = pulse amplitude (up to 1C-4C for short pulses)<br>
+          <span>D</span> = duty cycle (0.7-0.9 typical)<br>
+          <span>f_pulse</span> = pulse frequency (0.5-5 Hz typical)<br>
+          <span>t_rest</span> = rest period between pulses (10-500 ms)
+        </div>
+      </div>
+      <div class="formula-block">
+        <h4><span class="stage-badge stage-2">REST</span>Relaxation Period</h4>
+        <p>During rest, battery OCV is measured to assess true SoC without IR drop influence. Some advanced chargers include negative pulses (depolarisation) during the rest phase.</p>
+        <div class="formula">V_ocv = V_measured (during rest, I = 0)</div>
+        <div class="formula">SoC = f(V_ocv) from manufacturer lookup table</div>
+        <p style="margin-top:8px;color:var(--text3)"><strong>Application:</strong> Advanced Li-ion and NiCd charging. Reduces heat, can improve charge acceptance. Requires sophisticated charger controller.</p>
+      </div>`
+  };
+
+  el.innerHTML = `
+    <div style="margin-bottom:10px;font:400 12px var(--body);color:var(--text2)">
+      Charging profile: <strong style="color:var(--amber)">${CHARGE_MODES[mode].label}</strong> for <strong style="color:var(--info)">${chemLabel}</strong> cells
+    </div>
+    ${formulas[mode]}
+    <div class="note" style="margin-top:10px">
+      <strong>References:</strong> IEEE 450 (Vented Lead-Acid Maintenance), IEEE 1188 (VRLA Maintenance),
+      IEEE 1106 (NiCd Maintenance), IEEE 946 (DC Aux Power System Design),
+      DIN 41773 (Charging of Lead-Acid Batteries), IEC 60896 (Stationary Lead-Acid Batteries).
+      Always follow manufacturer-specific charging recommendations.
+    </div>
+  `;
+}
+
+// ─── FULL RESULTS ────────────────────────────────────────
+function renderResults(){
+  const r=results;
+  const area=document.getElementById('results-area');
+  if(!r.selectedAh){area.innerHTML='<p style="color:var(--text3);font-style:italic;padding:20px">Add loads and calculate to see results.</p>';return;}
+
+  const battLabel = {vla:'Vented Lead-Acid',vrla:'VRLA (Sealed)',nicd:'Nickel-Cadmium',liion:'Lithium-Ion LFP'}[r.battType];
+
+  area.innerHTML=`
+    <!-- KEY METRICS -->
+    <div class="metrics">
+      <div class="metric m-info">
+        <div class="metric-label">Total Bank Capacity</div>
+        <div class="metric-val">${r.selectedAh}</div>
+        <div class="metric-unit">Ah (${r.nStrings} string${r.nStrings>1?'s':''} × ${r.ahPerString} Ah)</div>
+      </div>
+      <div class="metric m-info">
+        <div class="metric-label">Cells per String (series)</div>
+        <div class="metric-val">${r.nCells}</div>
+        <div class="metric-unit">${(r.nCells*r.nomCellV).toFixed(0)}V nominal</div>
+      </div>
+      <div class="metric m-info">
+        <div class="metric-label">Parallel Strings</div>
+        <div class="metric-val">${r.nStrings}</div>
+        <div class="metric-unit">${r.totalCells} total cells</div>
+      </div>
+      <div class="metric m-info">
+        <div class="metric-label">Bank Energy</div>
+        <div class="metric-val">${r.bankKwh.toFixed(1)}</div>
+        <div class="metric-unit">kWh</div>
+      </div>
+      <div class="metric m-info">
+        <div class="metric-label">Charger Rating</div>
+        <div class="metric-val">${r.chargerRounded}</div>
+        <div class="metric-unit">A @ ${(r.nCells*r.floatVpc).toFixed(0)} Vdc</div>
+      </div>
+      <div class="metric m-info">
+        <div class="metric-label">Est. Weight</div>
+        <div class="metric-val">${r.estWeight<1000?r.estWeight.toFixed(0):(r.estWeight/1000).toFixed(1)+'k'}</div>
+        <div class="metric-unit">kg</div>
+      </div>
+    </div>
+
+    <!-- BATTERY BANK VISUAL -->
+    <div class="card card-calc">
+      <div class="card-head"><span class="card-title">Battery Bank Layout</span>
+        <span style="font:400 10px var(--mono);color:var(--text3)">${r.nStrings} string${r.nStrings>1?'s':''} × ${r.nCells} cells</span>
+      </div>
+      <div class="card-body" style="padding:8px">
+        <svg id="bank-svg" viewBox="0 0 700 ${50+r.nStrings*(Math.ceil(r.nCells/30)*(28+4)+((r.nStrings>1)?20:12))+20}" xmlns="http://www.w3.org/2000/svg">
+          ${renderBankSVG(r)}
+        </svg>
+      </div>
+    </div>
+
+    <!-- SIZING BREAKDOWN -->
+    <div class="card card-calc">
+      <div class="card-head"><span class="card-title">Capacity Sizing Breakdown</span>
+        <span style="font:400 10px var(--mono);color:var(--text3)">IEEE 485 Ah method</span>
+      </div>
+      <div class="card-body" style="padding:0">
+        <table class="break-table">
+          <thead><tr><th>Step</th><th>Factor</th><th style="text-align:right">Ah</th></tr></thead>
+          <tbody>
+            <tr><td>Raw load energy (∑ A×h)</td><td>—</td><td style="text-align:right">${r.totalAh.toFixed(1)}</td></tr>
+            <tr><td>÷ System efficiency</td><td>${(r.sysEff*100).toFixed(0)}%</td><td style="text-align:right">${r.ahDesign.toFixed(1)}</td></tr>
+            <tr><td>÷ Max depth of discharge</td><td>${(r.maxDoD*100).toFixed(0)}%</td><td style="text-align:right">${r.ahDoD.toFixed(1)}</td></tr>
+            <tr><td>× Aging factor</td><td>${r.agingF.toFixed(2)}</td><td style="text-align:right">${r.ahAging.toFixed(1)}</td></tr>
+            <tr><td>× Temperature correction</td><td>${r.tempFactor.toFixed(3)} (${r.tempC}°C)</td><td style="text-align:right">${r.ahTemp.toFixed(1)}</td></tr>
+            <tr><td>× Design margin</td><td>${(r.designM*100).toFixed(0)}%</td><td style="text-align:right">${r.ahMargin.toFixed(1)}</td></tr>
+            <tr><td style="color:var(--amber);font-weight:700">Minimum required capacity</td><td></td><td style="text-align:right;color:var(--amber);font-weight:700">${r.requiredAh} Ah</td></tr>
+            <tr><td style="color:var(--info);font-weight:700">Selected standard capacity</td><td></td><td style="text-align:right;color:var(--info);font-weight:700">${r.selectedAh} Ah</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- CELL VOLTAGE -->
+    <div class="card card-calc">
+      <div class="card-head"><span class="card-title">Cell &amp; Voltage Summary</span></div>
+      <div class="card-body" style="padding:0">
+        <table class="break-table">
+          <tbody>
+            <tr><td>Battery type</td><td style="text-align:right">${battLabel}</td></tr>
+            <tr><td>Nominal cell voltage</td><td style="text-align:right">${r.nomCellV.toFixed(2)} V</td></tr>
+            <tr><td>Float charge voltage / cell</td><td style="text-align:right">${r.floatVpc.toFixed(2)} V</td></tr>
+            <tr><td>End-of-discharge voltage / cell</td><td style="text-align:right">${r.eodVpc.toFixed(2)} V</td></tr>
+            <tr><td>Cells in series (max from float)</td><td style="text-align:right">${r.nCellsMax}</td></tr>
+            <tr><td>Cells in series (min from EoD)</td><td style="text-align:right">${r.nCellsMin}</td></tr>
+            <tr><td>Selected cells per string (series)</td><td style="text-align:right;font-weight:700;color:var(--amber)">${r.nCells} cells</td></tr>
+            <tr><td>Actual EoD V/cell (${r.vMin}V / ${r.nCells})</td><td style="text-align:right">${r.actualEodVpc.toFixed(3)} V ${r.actualEodVpc>=r.eodVpc?'<span class="badge badge-pass">OK</span>':'<span class="badge badge-fail">Below limit</span>'}</td></tr>
+            <tr><td>Float bus voltage</td><td style="text-align:right">${(r.nCells*r.floatVpc).toFixed(1)} V</td></tr>
+            <tr><td>Nominal bus voltage</td><td style="text-align:right">${(r.nCells*r.nomCellV).toFixed(1)} V</td></tr>
+            <tr><td>Autonomy</td><td style="text-align:right">${r.autonomy>=60?(r.autonomy/60).toFixed(1)+' hours':r.autonomy+' min'}</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- BANK TOPOLOGY -->
+    <div class="card card-calc">
+      <div class="card-head"><span class="card-title">Bank Topology</span>
+        <span style="font:400 10px var(--mono);color:var(--text3)">${r.configMode==='manual'?'Manual':'Auto'} config</span>
+      </div>
+      <div class="card-body" style="padding:0">
+        <table class="break-table">
+          <tbody>
+            <tr><td>Connection</td><td style="text-align:right">${r.nStrings===1?'Series only (single string)':r.nStrings+' strings in parallel, each '+r.nCells+' cells in series'}</td></tr>
+            <tr><td>Cells per string (series)</td><td style="text-align:right">${r.nCells}</td></tr>
+            <tr><td>Parallel strings</td><td style="text-align:right">${r.nStrings}</td></tr>
+            <tr><td>Ah per string</td><td style="text-align:right">${r.ahPerString} Ah</td></tr>
+            <tr><td>Total bank capacity</td><td style="text-align:right;font-weight:700">${r.selectedAh} Ah</td></tr>
+            <tr><td>Total cells in bank</td><td style="text-align:right">${r.totalCells}</td></tr>
+            <tr><td>Peak current per string</td><td style="text-align:right">${r.currentPerString.toFixed(1)} A</td></tr>
+            <tr><td>Peak total current</td><td style="text-align:right">${r.peakA.toFixed(1)} A</td></tr>
+            <tr><td>Capacity vs required (${r.requiredAh} Ah)</td><td style="text-align:right">${r.capacityOk?'<span class="badge badge-pass">OK (+'+r.capacityMarginPct.toFixed(0)+'%)</span>':'<span class="badge badge-fail">UNDERSIZED</span>'}</td></tr>
+            ${r.nStrings>1?'<tr><td>Charger per string</td><td style="text-align:right">'+r.chargerRoundedPerStr+' A</td></tr>':''}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- VOLTAGE DISCHARGE PROFILE -->
+    <div class="card card-calc">
+      <div class="card-head"><span class="card-title">Voltage Discharge Profile</span>
+        <span style="font:400 10px var(--mono);color:var(--text3)">Bus voltage vs time during duty cycle</span>
+      </div>
+      <div class="card-body" style="padding:8px">
+        <svg id="vdischarge-svg" viewBox="0 0 700 240" xmlns="http://www.w3.org/2000/svg"></svg>
+      </div>
+    </div>
+
+    <!-- CHARGER SIZING -->
+    <div class="section-divider" style="border-color:rgba(74,158,255,0.15)"><span class="num" style="background:var(--info-dim);color:var(--info);border-color:rgba(74,158,255,0.25)">C</span> Charger Sizing</div>
+    <div class="inline-inputs">
+      <div class="inline-label">Charger Parameters — IEEE 946</div>
+      <div class="row4" style="margin-top:6px">
+        <div class="field"><label>Charging Mode</label><select id="charge-mode-results" onchange="secSave();syncChargeMode();drawMiniChargeCurve()"><option value="cc" ${secInputs.chargeMode==='cc'?'selected':''}>CC — Constant Current</option><option value="cv" ${secInputs.chargeMode==='cv'?'selected':''}>CV — Constant Voltage</option><option value="cccv" ${secInputs.chargeMode==='cccv'?'selected':''}>CC-CV — Two Stage</option><option value="iuou" ${secInputs.chargeMode==='iuou'?'selected':''}>IUoU — Three Stage</option><option value="iuia" ${secInputs.chargeMode==='iuia'?'selected':''}>IUIa — Equalise</option><option value="pulse" ${secInputs.chargeMode==='pulse'?'selected':''}>Pulse</option></select></div>
+        <div class="field"><label>Recharge Time (h)</label><select id="recharge-time" onchange="secSave();renderChargerSection(results)"><option value="8" ${secInputs.rechargeTime==='8'?'selected':''}>8 hours</option><option value="10" ${secInputs.rechargeTime==='10'?'selected':''}>10 hours</option><option value="12" ${secInputs.rechargeTime==='12'?'selected':''}>12 hours</option><option value="24" ${secInputs.rechargeTime==='24'?'selected':''}>24 hours</option></select></div>
+        <div class="field"><label>Recharge Efficiency (%)</label><input type="number" id="recharge-eff" value="${secInputs.rechargeEff}" step="1" min="50" max="100" oninput="secSave();renderChargerSection(results)"></div>
+        <div class="field"><label>Oversize Factor</label><select id="charger-oversize" onchange="secSave();renderChargerSection(results)"><option value="1.10" ${secInputs.chargerOversize==='1.10'?'selected':''}>1.10</option><option value="1.15" ${secInputs.chargerOversize==='1.15'?'selected':''}>1.15</option><option value="1.20" ${secInputs.chargerOversize==='1.20'?'selected':''}>1.20</option><option value="1.25" ${secInputs.chargerOversize==='1.25'?'selected':''}>1.25</option></select></div>
+      </div>
+    </div>
+    <div class="card card-calc">
+      <div class="card-head"><span class="card-title">Charger Sizing</span></div>
+      <div class="card-body" id="charger-results-body"></div>
+    </div>
+    <div class="card card-calc">
+      <div class="card-head"><span class="card-title">Charging Profile Preview</span><span id="mini-curve-label" style="font:400 10px var(--mono);color:var(--text3)"></span></div>
+      <div class="card-body" style="padding:8px"><svg id="mini-charge-curve" viewBox="0 0 700 160" xmlns="http://www.w3.org/2000/svg"></svg></div>
+    </div>
+
+    <!-- DC CABLE SIZING -->
+    <div class="section-divider" style="border-color:rgba(74,158,255,0.15)"><span class="num" style="background:var(--info-dim);color:var(--info);border-color:rgba(74,158,255,0.25)">D</span> DC Cable Sizing</div>
+    <div class="inline-inputs">
+      <div class="inline-label">Cable Parameters — AS/NZS 3008</div>
+      <div class="row3" style="margin-top:6px">
+        <div class="field"><label>Cable Run (m)</label><input type="number" id="cable-length" value="${secInputs.cableLength}" step="1" min="1" oninput="secSave();calcCables()"></div>
+        <div class="field"><label>Max V-Drop (%)</label><select id="cable-vd-limit" onchange="secSave();calcCables()"><option value="2" ${secInputs.cableVdLimit==='2'?'selected':''}>2%</option><option value="3" ${secInputs.cableVdLimit==='3'?'selected':''}>3%</option><option value="5" ${secInputs.cableVdLimit==='5'?'selected':''}>5%</option></select></div>
+        <div class="field"><label>Installation</label><select id="cable-install" onchange="secSave();calcCables()"><option value="trefoil_enclosed" ${secInputs.cableInstall==='trefoil_enclosed'?'selected':''}>Trefoil enclosed tray</option><option value="flat_spaced" ${secInputs.cableInstall==='flat_spaced'?'selected':''}>Flat spaced tray</option><option value="conduit" ${secInputs.cableInstall==='conduit'?'selected':''}>Conduit</option><option value="buried" ${secInputs.cableInstall==='buried'?'selected':''}>Buried direct</option><option value="free_air" ${secInputs.cableInstall==='free_air'?'selected':''}>Free air / ladder</option></select></div>
+      </div>
+      <div class="row3" style="margin-top:8px">
+        <div class="field"><label>Conductor</label><select id="cable-material" onchange="secSave();calcCables()"><option value="cu" ${secInputs.cableMaterial==='cu'?'selected':''}>Copper</option><option value="al" ${secInputs.cableMaterial==='al'?'selected':''}>Aluminium</option></select></div>
+        <div class="field"><label>Insulation</label><select id="cable-insulation" onchange="secSave();calcCables()"><option value="xlpe" ${secInputs.cableInsulation==='xlpe'?'selected':''}>XLPE (90 C)</option><option value="pvc" ${secInputs.cableInsulation==='pvc'?'selected':''}>PVC (75 C)</option></select></div>
+        <div class="field"><label>Cable Ambient (C)</label><input type="number" id="cable-ambient" value="${secInputs.cableAmbient}" step="1" oninput="secSave();calcCables()"></div>
+      </div>
+    </div>
+    <div class="card card-calc">
+      <div class="card-head"><span class="card-title">Cable Sizing</span></div>
+      <div class="card-body" id="cable-results-body"></div>
+    </div>
+
+    <!-- VENTILATION -->
+    <div class="section-divider" style="border-color:rgba(74,158,255,0.15)"><span class="num" style="background:var(--info-dim);color:var(--info);border-color:rgba(74,158,255,0.25)">E</span> Battery Room Ventilation</div>
+    <div class="inline-inputs">
+      <div class="inline-label">Room Parameters — EN 50272-2 / AS/NZS 3011</div>
+      <div class="row3" style="margin-top:6px">
+        <div class="field"><label>Room Length (m)</label><input type="number" id="room-length" value="${secInputs.roomLength}" step="0.1" min="0.5" oninput="secSave();calcVent()"></div>
+        <div class="field"><label>Room Width (m)</label><input type="number" id="room-width" value="${secInputs.roomWidth}" step="0.1" min="0.5" oninput="secSave();calcVent()"></div>
+        <div class="field"><label>Room Height (m)</label><input type="number" id="room-height" value="${secInputs.roomHeight}" step="0.1" min="2" oninput="secSave();calcVent()"></div>
+      </div>
+      <div class="row3" style="margin-top:8px">
+        <div class="field"><label>H2 Limit (%)</label><select id="h2-limit" onchange="secSave();calcVent()"><option value="0.5" ${secInputs.h2Limit==='0.5'?'selected':''}>0.5%</option><option value="1.0" ${secInputs.h2Limit==='1.0'?'selected':''}>1.0% (safe)</option><option value="2.0" ${secInputs.h2Limit==='2.0'?'selected':''}>2.0% (EN max)</option></select></div>
+        <div class="field"><label>Charge Mode</label><select id="vent-charge-mode" onchange="secSave();calcVent()"><option value="float" ${secInputs.ventChargeMode==='float'?'selected':''}>Float</option><option value="boost" ${secInputs.ventChargeMode==='boost'?'selected':''}>Boost / equalise</option></select></div>
+        <div class="field"><label>Safety Factor</label><select id="vent-safety" onchange="secSave();calcVent()"><option value="1.0" ${secInputs.ventSafety==='1.0'?'selected':''}>1.0</option><option value="1.25" ${secInputs.ventSafety==='1.25'?'selected':''}>1.25</option><option value="1.5" ${secInputs.ventSafety==='1.5'?'selected':''}>1.5</option></select></div>
+      </div>
+    </div>
+    <div class="card card-calc">
+      <div class="card-head"><span class="card-title">Ventilation</span></div>
+      <div class="card-body" id="vent-results-body"></div>
+    </div>
+
+    <!-- NOTES -->
+    <div class="note">
+      <strong>Standards:</strong> IEEE 485-2020 (battery), IEEE 946 (charger), AS/NZS 3008 (cable), EN 50272-2 / AS/NZS 3011 (ventilation).
+      Always verify with manufacturer data and site-specific engineering review.
+    </div>
+  `;
+  setTimeout(()=>{
+    drawVoltageDischargeCurve(r);
+    renderChargerSection(r);
+    drawMiniChargeCurve();
+    calcCables();
+    calcVent();
+  }, 0);
+}
+
+function renderAllResults(){ renderResults(); }
+
+function renderChargerSection(r){
+  if(!r||!r.selectedAh) return;
+  const body=document.getElementById('charger-results-body');
+  if(!body) return;
+
+  // Re-read inline inputs (may have been changed by user in Results tab)
+  const rechargeH = parseFloat((document.getElementById('recharge-time')||{}).value)||8;
+  const rechargeEff = (parseFloat((document.getElementById('recharge-eff')||{}).value)||85)/100;
+  const chargerOF = parseFloat((document.getElementById('charger-oversize')||{}).value)||1.15;
+
+  const ahRemoved = r.totalAh;
+  const rechargeCurrent = ahRemoved / (rechargeH * rechargeEff);
+  const chargerCurrent = (rechargeCurrent + r.contA) * chargerOF;
+  const chargerRounded = Math.ceil(chargerCurrent/5)*5;
+  const chargerPower = chargerRounded * r.nCells * r.floatVpc;
+
+  body.innerHTML=`
+    <div class="charger-diagram">
+      <div class="charger-box" style="background:var(--bg3);border:2px solid var(--amber)"><div class="lbl">AC Input</div><div class="val" style="color:var(--amber)">${r.nCells>30?'415V 3ph':'240V 1ph'}</div></div>
+      <div class="charger-arrow">&rarr;</div>
+      <div class="charger-box" style="background:var(--info-dim);border:2px solid var(--info)"><div class="lbl">Charger</div><div class="val" style="color:var(--info)">${chargerRounded} A</div><div class="lbl">${(chargerPower/1000).toFixed(1)} kW</div></div>
+      <div class="charger-arrow">&rarr;</div>
+      <div class="charger-box" style="background:var(--amber-dim);border:2px solid var(--amber)"><div class="lbl">Battery</div><div class="val" style="color:var(--amber)">${r.selectedAh} Ah</div><div class="lbl">${r.nStrings>1?r.nStrings+'P x ':''}${r.nCells}S</div></div>
+      <div class="charger-arrow">&rarr;</div>
+      <div class="charger-box" style="background:var(--info-dim);border:2px solid var(--info)"><div class="lbl">DC Load</div><div class="val" style="color:var(--info)">${r.contA.toFixed(1)} A</div><div class="lbl">Continuous</div></div>
+    </div>
+    <table class="break-table">
+      <tr><td style="color:var(--text3)">Ah removed during discharge</td><td style="text-align:right">${ahRemoved.toFixed(1)} Ah</td></tr>
+      <tr><td style="color:var(--text3)">Recharge current (Ah / ${rechargeH}h / ${(rechargeEff*100).toFixed(0)}%)</td><td style="text-align:right">${rechargeCurrent.toFixed(1)} A</td></tr>
+      <tr><td style="color:var(--text3)">+ Continuous load</td><td style="text-align:right">${r.contA.toFixed(1)} A</td></tr>
+      <tr><td style="color:var(--text3)">x Oversize factor (${(chargerOF*100).toFixed(0)}%)</td><td style="text-align:right">${chargerCurrent.toFixed(1)} A</td></tr>
+      <tr><td style="color:var(--amber);font-weight:600">Required charger rating</td><td style="text-align:right;color:var(--amber);font-weight:700">${chargerRounded} A @ ${(r.nCells*r.floatVpc).toFixed(0)} Vdc</td></tr>
+      <tr><td style="color:var(--text3)">Recharge time to 95%</td><td style="text-align:right">${rechargeH} hours</td></tr>
+    </table>`;
+}
+
+// ─── BATTERY BANK SVG ────────────────────────────────────
+function renderBankSVG(r){
+  const nCells=r.nCells, nStr=r.nStrings;
+  const cellsPerRow = Math.min(nCells, 30);
+  const nRows = Math.ceil(nCells/cellsPerRow);
+  const svgW=700;
+  const cellW = Math.min(18, (svgW-100)/(cellsPerRow));
+  const cellH = 28;
+  const cellGap = 2;
+  const strGap = nStr>1?20:12;
+  const startX = 50 + (svgW-100 - cellsPerRow*(cellW+cellGap))/2;
+  const strHeight = nRows*(cellH+4);
+  const totalH = 30 + nStr*(strHeight+strGap) + 20;
+
+  let html='';
+
+  // Parallel bus bars (left + / right -)
+  if(nStr>1){
+    const busX1 = startX - 18;
+    const busX2 = startX + cellsPerRow*(cellW+cellGap) + 12;
+    const busY1 = 20 + cellH/2;
+    const busY2 = 20 + (nStr-1)*(strHeight+strGap) + cellH/2;
+    // Positive bus (amber)
+    html+=`<rect x="${busX1-2}" y="${busY1-4}" width="6" height="${busY2-busY1+8}" rx="2" fill="rgba(232,168,56,0.25)" stroke="#e8a838" stroke-width="1"/>`;
+    html+=`<text x="${busX1+1}" y="${busY1-8}" text-anchor="middle" fill="#e8a838" font-family="DM Mono" font-size="9" font-weight="700">+</text>`;
+    // Negative bus (blue)
+    html+=`<rect x="${busX2-2}" y="${busY1-4}" width="6" height="${busY2-busY1+8}" rx="2" fill="rgba(91,138,245,0.25)" stroke="#4a9eff" stroke-width="1"/>`;
+    html+=`<text x="${busX2+1}" y="${busY1-8}" text-anchor="middle" fill="#4a9eff" font-family="DM Mono" font-size="9" font-weight="700">-</text>`;
+    // "PARALLEL" label
+    html+=`<text x="${busX1-2}" y="${(busY1+busY2)/2+3}" text-anchor="end" fill="#adb8cf" font-family="DM Mono" font-size="8" transform="rotate(-90,${busX1-10},${(busY1+busY2)/2})">PARALLEL</text>`;
+  }
+
+  for(let s=0;s<nStr;s++){
+    const baseY = 20 + s*(strHeight+strGap);
+
+    // String background
+    html+=`<rect x="${startX-6}" y="${baseY-6}" width="${cellsPerRow*(cellW+cellGap)+12}" height="${strHeight+12}" rx="4" fill="rgba(40,51,78,0.5)" stroke="var(--bg4)" stroke-width="0.5" stroke-dasharray="4,3"/>`;
+
+    // String label
+    html+=`<text x="${startX-22}" y="${baseY+cellH/2+4}" fill="${nStr>1?'#e8a838':'#adb8cf'}" font-family="DM Mono" font-size="9" text-anchor="end" font-weight="600">S${s+1}</text>`;
+    // Ah per string
+    html+=`<text x="${startX+cellsPerRow*(cellW+cellGap)+20}" y="${baseY+cellH/2+4}" fill="#adb8cf" font-family="DM Mono" font-size="8">${r.ahPerString}Ah</text>`;
+
+    for(let c=0;c<nCells;c++){
+      const row=Math.floor(c/cellsPerRow);
+      const col=c%cellsPerRow;
+      const x=startX+col*(cellW+cellGap);
+      const y=baseY+row*(cellH+4);
+      const hue = 160 + (c/nCells)*40;
+      html+=`<rect x="${x}" y="${y}" width="${cellW}" height="${cellH}" rx="2" fill="hsl(${hue},45%,${25+s*5}%)" stroke="hsl(${hue},50%,40%)" stroke-width="0.5"/>`;
+      // Terminal nubs
+      html+=`<rect x="${x+cellW*0.2}" y="${y-2}" width="${cellW*0.15}" height="3" rx="0.5" fill="#e8a838"/>`;
+      html+=`<rect x="${x+cellW*0.65}" y="${y-2}" width="${cellW*0.15}" height="3" rx="0.5" fill="#4a9eff"/>`;
+    }
+
+    // Series arrow line inside string
+    const lineY = baseY + cellH + 2;
+    html+=`<line x1="${startX}" y1="${lineY}" x2="${startX+Math.min(nCells,cellsPerRow)*(cellW+cellGap)-cellGap}" y2="${lineY}" stroke="#e8a838" stroke-width="1" stroke-dasharray="3,2" opacity="0.4"/>`;
+    if(nCells>3){
+      html+=`<text x="${startX+Math.min(nCells,cellsPerRow)*(cellW+cellGap)/2}" y="${lineY+10}" text-anchor="middle" fill="#adb8cf" font-family="DM Mono" font-size="7">SERIES (${nCells} cells)</text>`;
+    }
+
+    // Connect to parallel bus
+    if(nStr>1){
+      const busX1 = startX - 18;
+      const busX2 = startX + cellsPerRow*(cellW+cellGap) + 12;
+      const midY = baseY + cellH/2;
+      html+=`<line x1="${busX1+4}" y1="${midY}" x2="${startX-6}" y2="${midY}" stroke="#e8a838" stroke-width="1" opacity="0.6"/>`;
+      html+=`<line x1="${startX+cellsPerRow*(cellW+cellGap)+6}" y1="${midY}" x2="${busX2-2}" y2="${midY}" stroke="#4a9eff" stroke-width="1" opacity="0.6"/>`;
+    } else {
+      // Single string: just show + and - labels
+      html+=`<text x="${startX-8}" y="${baseY+cellH/2+4}" fill="#e8a838" font-family="DM Mono" font-size="10" text-anchor="end" font-weight="700">+</text>`;
+      html+=`<text x="${startX+cellsPerRow*(cellW+cellGap)+6}" y="${baseY+cellH/2+4}" fill="#4a9eff" font-family="DM Mono" font-size="10" font-weight="700">-</text>`;
+    }
+  }
+
+  // Summary text
+  const notation = nStr>1 ? `${nStr}P${nCells}S` : `${nCells}S`;
+  html+=`<text x="${svgW/2}" y="${totalH}" text-anchor="middle" fill="#adb8cf" font-family="DM Mono" font-size="10">${notation} | ${r.totalCells} total cells | ${r.selectedAh} Ah @ ${(nCells*r.nomCellV).toFixed(0)}V nominal</text>`;
+
+  return html;
+}
+
+// ─── VOLTAGE DISCHARGE PROFILE ───────────────────────────
+function drawVoltageDischargeCurve(r){
+  const svg=document.getElementById('vdischarge-svg');
+  const content = buildVoltageDischargeSVG(r);
+  if(svg) svg.innerHTML = content;
+}
+
+function buildVoltageDischargeSVG(r){
+  if(!r||!r.periods||!r.periods.length) return '';
+  const W=700,H=240,ml=55,mr=20,mt=20,mb=35;
+  const pw=W-ml-mr,ph=H-mt-mb;
+  const totalMin=r.autonomy;
+  const busNom=r.nCells*r.nomCellV;
+  const busFloat=r.nCells*r.floatVpc;
+  const busMin=r.vMin;
+  const busEod=r.nCells*r.eodVpc;
+  const vTop=busFloat*1.02, vBot=busEod*0.95;
+
+  let html=`<defs><linearGradient id="vdg" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#e8a838" stop-opacity="0.15"/>
+    <stop offset="100%" stop-color="#e8a838" stop-opacity="0"/>
+  </linearGradient></defs>`;
+
+  // Grid
+  for(let i=0;i<=5;i++){
+    const y=mt+ph*(i/5),v=vTop-(vTop-vBot)*(i/5);
+    html+=`<line x1="${ml}" y1="${y}" x2="${ml+pw}" y2="${y}" stroke="#323f60" stroke-width="0.5"/>`;
+    html+=`<text x="${ml-5}" y="${y+3}" text-anchor="end" fill="#e8a838" font-family="DM Mono" font-size="8">${v.toFixed(0)}V</text>`;
+  }
+  for(let i=0;i<=8;i++){
+    const x=ml+pw*(i/8),t=totalMin*(i/8);
+    html+=`<line x1="${x}" y1="${mt}" x2="${x}" y2="${mt+ph}" stroke="#323f60" stroke-width="0.5"/>`;
+    html+=`<text x="${x}" y="${H-mb+14}" text-anchor="middle" fill="#adb8cf" font-family="DM Mono" font-size="8">${t>=60?(t/60).toFixed(0)+'h':t.toFixed(0)+'m'}</text>`;
+  }
+  html+=`<line x1="${ml}" y1="${mt}" x2="${ml}" y2="${mt+ph}" stroke="#adb8cf" stroke-width="1"/>`;
+  html+=`<line x1="${ml}" y1="${mt+ph}" x2="${ml+pw}" y2="${mt+ph}" stroke="#adb8cf" stroke-width="1"/>`;
+
+  // Min voltage threshold line
+  const yMin=mt+ph*(1-(busMin-vBot)/(vTop-vBot));
+  html+=`<line x1="${ml}" y1="${yMin}" x2="${ml+pw}" y2="${yMin}" stroke="var(--danger)" stroke-width="1.5" stroke-dasharray="6,3" opacity="0.7"/>`;
+  html+=`<text x="${ml+pw+3}" y="${yMin+3}" fill="var(--danger)" font-family="DM Mono" font-size="8">${busMin}V min</text>`;
+
+  // Nominal line
+  const yNom=mt+ph*(1-(busNom-vBot)/(vTop-vBot));
+  html+=`<line x1="${ml}" y1="${yNom}" x2="${ml+pw}" y2="${yNom}" stroke="var(--info)" stroke-width="1" stroke-dasharray="4,4" opacity="0.4"/>`;
+  html+=`<text x="${ml+pw+3}" y="${yNom+3}" fill="var(--info)" font-family="DM Mono" font-size="7">${busNom.toFixed(0)}V nom</text>`;
+
+  // Simulate voltage discharge: V drops based on current draw and internal impedance
+  const Rint = (r.battType==='liion'?0.002:r.battType==='nicd'?0.004:0.005)*r.nCells/Math.max(1,r.nStrings);
+  const capWh = r.selectedAh*busNom;
+  let pts=[], cumAh=0, vPrev=busFloat;
+  const nSamples=200;
+  for(let s=0;s<=nSamples;s++){
+    const t=totalMin*(s/nSamples);
+    let iNow=0;
+    r.periods.forEach(p=>{if(t>=p.start&&t<p.end) iNow=p.amps;});
+    const dt=totalMin/nSamples/60;
+    cumAh+=iNow*dt;
+    const socRemain=Math.max(0,1-cumAh/r.selectedAh);
+    const vOcv=busEod+(busFloat-busEod)*socRemain;
+    const vBus=Math.max(busEod*0.95, vOcv-iNow*Rint);
+    const x=ml+pw*(s/nSamples);
+    const y=mt+ph*(1-(vBus-vBot)/(vTop-vBot));
+    pts.push(`${x.toFixed(1)},${Math.max(mt,Math.min(mt+ph,y)).toFixed(1)}`);
+    vPrev=vBus;
+  }
+  html+=`<polygon points="${pts.join(' ')} ${ml+pw},${mt+ph} ${ml},${mt+ph}" fill="url(#vdg)"/>`;
+  html+=`<polyline points="${pts.join(' ')}" fill="none" stroke="#e8a838" stroke-width="2.5" stroke-linejoin="round"/>`;
+
+  // Check if voltage goes below minimum
+  const finalV=vPrev;
+  const ok=finalV>=busMin;
+  html+=`<text x="${ml+pw/2}" y="${H-2}" text-anchor="middle" fill="${ok?'var(--success)':'var(--danger)'}" font-family="DM Mono" font-size="10" font-weight="600">${ok?'PASS':'FAIL'}: End voltage ${finalV.toFixed(1)}V ${ok?'>':'<'} ${busMin}V minimum</text>`;
+  html+=`<text x="14" y="${mt+ph/2}" text-anchor="middle" fill="#e8a838" font-family="DM Mono" font-size="9" transform="rotate(-90,14,${mt+ph/2})">Bus Voltage (V)</text>`;
+
+  html = html.replace(/var\(--success\)/g,'#3ecf8e').replace(/var\(--danger\)/g,'#f06060');
+  return html;
+}
+
+// ─── DC CABLE SIZING (AS/NZS 3008) ──────────────────────
+const CABLE_CCC_CU_XLPE = {1.5:23,2.5:31,4:42,6:54,10:73,16:99,25:131,35:162,50:199,70:253,95:306,120:352,150:400,185:456,240:538,300:615,400:727,500:830,630:960};
+const CABLE_CCC_CU_PVC = {1.5:19.5,2.5:27,4:36,6:46,10:63,16:85,25:112,35:138,50:168,70:213,95:258,120:299,150:339,185:388,240:456,300:521,400:614,500:700,630:812};
+const CABLE_CCC_AL_XLPE = {2.5:24,4:32,6:42,10:57,16:77,25:101,35:126,50:154,70:196,95:237,120:274,150:311,185:354,240:418,300:478,400:565,500:645,630:745};
+const CABLE_CCC_AL_PVC = {2.5:21,4:28,6:36,10:49,16:66,25:87,35:107,50:131,70:167,95:202,120:233,150:265,185:303,240:357,300:408,400:482,500:550,630:637};
+const CABLE_MV_PER_M = {1.5:12.1,2.5:7.41,4:4.61,6:3.08,10:1.83,16:1.15,25:0.727,35:0.524,50:0.387,70:0.268,95:0.193,120:0.153,150:0.124,185:0.0991,240:0.0754,300:0.0601,400:0.0470,500:0.0366,630:0.0283};
+const INSTALL_DERATE = {trefoil_enclosed:0.73,flat_spaced:0.90,conduit:0.70,buried:0.78,free_air:1.00};
+function getTempDerate(insul,amb){
+  const ref=insul==='xlpe'?90:75;
+  if(amb>=ref)return 0.1;
+  return Math.sqrt((ref-amb)/(ref-40));
+}
+
+function calcCables(){
+  const r=results;
+  const body=document.getElementById('cable-results-body');
+  if(!body) return;
+  if(!r||!r.selectedAh){body.innerHTML='<p style="color:var(--text3);font-style:italic">Configure battery system first.</p>';return;}
+
+  const len=parseFloat((document.getElementById('cable-length')||{}).value)||25;
+  const vdLimit=(parseFloat((document.getElementById('cable-vd-limit')||{}).value)||5)/100;
+  const install=(document.getElementById('cable-install')||{}).value||'trefoil_enclosed';
+  const mat=(document.getElementById('cable-material')||{}).value||'cu';
+  const insul=(document.getElementById('cable-insulation')||{}).value||'xlpe';
+  const ambT=parseFloat((document.getElementById('cable-ambient')||{}).value)||40;
+
+  const busV=r.nCells*r.nomCellV;
+  const Imax=r.peakA;
+  const Icont=r.contA;
+  const maxVdrop=busV*vdLimit;
+  const installF=INSTALL_DERATE[install]||0.8;
+  const tempF=getTempDerate(insul,ambT);
+
+  const cccTable=mat==='cu'?(insul==='xlpe'?CABLE_CCC_CU_XLPE:CABLE_CCC_CU_PVC):(insul==='xlpe'?CABLE_CCC_AL_XLPE:CABLE_CCC_AL_PVC);
+  const mvTable=CABLE_MV_PER_M;
+  const sizes=Object.keys(cccTable).map(Number).sort((a,b)=>a-b);
+
+  // Size for CCC (derated) - based on continuous current
+  let cccSize=null,cccDerated=0;
+  for(const sz of sizes){
+    cccDerated=cccTable[sz]*installF*tempF;
+    if(cccDerated>=Icont){cccSize=sz;break;}
+  }
+
+  // Size for voltage drop at peak current (2x length for DC +/-)
+  let vdSize=null,vdActual=0;
+  for(const sz of sizes){
+    const mvpm=mvTable[sz]||999;
+    const vd=Imax*mvpm*len*2/1000;
+    if(vd<=maxVdrop){vdSize=sz;vdActual=vd;break;}
+  }
+
+  const selectedSize=Math.max(cccSize||0,vdSize||0);
+  const selectedMvpm=mvTable[selectedSize]||0;
+  const actualVd=Imax*selectedMvpm*len*2/1000;
+  const actualVdPct=(actualVd/busV*100);
+  const actualCCC=cccTable[selectedSize]*installF*tempF;
+
+  body.innerHTML=`
+    <div class="metrics" style="margin-bottom:12px">
+      <div class="metric m-info"><div class="metric-label">Cable Size</div><div class="metric-val">${selectedSize}</div><div class="metric-unit">mm2 ${mat==='cu'?'Copper':'Aluminium'} ${insul.toUpperCase()}</div></div>
+      <div class="metric m-info"><div class="metric-label">Voltage Drop</div><div class="metric-val">${actualVd.toFixed(1)}</div><div class="metric-unit">V (${actualVdPct.toFixed(1)}%) ${actualVdPct<=vdLimit*100?'<span class="badge badge-pass">OK</span>':'<span class="badge badge-fail">FAIL</span>'}</div></div>
+      <div class="metric m-info"><div class="metric-label">Derated CCC</div><div class="metric-val">${actualCCC.toFixed(0)}</div><div class="metric-unit">A (needs ${Icont.toFixed(0)}A cont.) ${actualCCC>=Icont?'<span class="badge badge-pass">OK</span>':'<span class="badge badge-fail">FAIL</span>'}</div></div>
+    </div>
+    <table class="break-table">
+      <thead><tr><th>Parameter</th><th style="text-align:right">Value</th></tr></thead>
+      <tbody>
+        <tr><td>Design current (continuous)</td><td style="text-align:right">${Icont.toFixed(1)} A</td></tr>
+        <tr><td>Peak current (momentary)</td><td style="text-align:right">${Imax.toFixed(1)} A</td></tr>
+        <tr><td>Bus voltage (nominal)</td><td style="text-align:right">${busV.toFixed(0)} V</td></tr>
+        <tr><td>Cable run length (one way)</td><td style="text-align:right">${len} m (${len*2} m total DC +/-)</td></tr>
+        <tr><td>Max voltage drop allowed</td><td style="text-align:right">${maxVdrop.toFixed(1)} V (${(vdLimit*100).toFixed(0)}%)</td></tr>
+        <tr><td>Installation derating</td><td style="text-align:right">${installF.toFixed(2)}</td></tr>
+        <tr><td>Temperature derating (${ambT} C)</td><td style="text-align:right">${tempF.toFixed(3)}</td></tr>
+        <tr><td>Size for CCC</td><td style="text-align:right">${cccSize||'N/A'} mm2 (${cccDerated.toFixed(0)}A derated)</td></tr>
+        <tr><td>Size for voltage drop</td><td style="text-align:right">${vdSize||'N/A'} mm2</td></tr>
+        <tr><td style="color:var(--amber);font-weight:700">Selected cable size (governing)</td><td style="text-align:right;color:var(--amber);font-weight:700">${selectedSize} mm2 ${mat==='cu'?'Cu':'Al'} ${insul.toUpperCase()}</td></tr>
+        <tr><td>Cable specification</td><td style="text-align:right">2x 1C ${selectedSize}mm2 ${mat==='cu'?'Cu':'Al'}/${insul.toUpperCase()} 0.6/1kV</td></tr>
+      </tbody>
+    </table>
+    <div class="note" style="margin-top:10px">
+      <strong>AS/NZS 3008:</strong> DC cable sizing uses mV/A/m values from Table 30/31.
+      Total route length is 2x one-way distance (positive + negative conductors).
+      For parallel strings, each string requires its own cable pair. Verify earth fault loop impedance per AS/NZS 3000.
+    </div>`;
+}
+
+// ─── BATTERY ROOM VENTILATION (EN 50272-2 / AS/NZS 3011) ─
+function calcVent(){
+  const r=results;
+  const body=document.getElementById('vent-results-body');
+  if(!body) return;
+  if(!r||!r.selectedAh){body.innerHTML='<p style="color:var(--text3);font-style:italic">Configure battery system first.</p>';return;}
+
+  const roomL=parseFloat((document.getElementById('room-length')||{}).value)||6;
+  const roomW=parseFloat((document.getElementById('room-width')||{}).value)||4;
+  const roomH=parseFloat((document.getElementById('room-height')||{}).value)||3;
+  const h2Limit=(parseFloat((document.getElementById('h2-limit')||{}).value)||1.0)/100;
+  const chargeMode=(document.getElementById('vent-charge-mode')||{}).value||'float';
+  const safetyF=parseFloat((document.getElementById('vent-safety')||{}).value)||1.25;
+
+  const roomVol=roomL*roomW*roomH;
+  const roomArea=roomL*roomW;
+  const nCells=r.nCells;
+  const ahPerStr=r.ahPerString;
+  const nStr=r.nStrings;
+
+  // H2 generation factor (m3/Ah at STP)
+  const vH2=0.00042; // 0.42 x 10^-3 m3/Ah
+
+  // Gassing current factor (per 100Ah, depends on charge mode and battery type)
+  let Igas;
+  if(r.battType==='liion'){Igas=0;}
+  else if(r.battType==='nicd'){Igas=chargeMode==='boost'?10:1;}
+  else {Igas=chargeMode==='boost'?20:1;} // lead-acid float vs boost
+
+  // H2 generation rate per string
+  const Cn=ahPerStr;
+  const Q_h2_str=vH2*nCells*Igas*(Cn/100); // m3/h per string
+  const Q_h2=Q_h2_str*nStr; // total m3/h
+
+  // Required ventilation air flow
+  const Q_air=(Q_h2/h2Limit)*safetyF; // m3/h
+
+  // Air changes per hour
+  const ACH=Q_air/roomVol;
+  const minACH=6; // AS/NZS 3011.1 minimum
+  const reqACH=Math.max(ACH,minACH);
+  const reqFlow=reqACH*roomVol; // actual required m3/h
+
+  // Fan sizing
+  const fanFlowLps=reqFlow/3.6; // L/s
+  const fanPressure=50; // typical Pa for short duct
+  const fanPower=reqFlow*fanPressure/(3600*0.5*1000); // kW estimate (50% efficiency)
+
+  // H2 dilution time to safe level if fully mixed
+  const dilutionTime=roomVol/(reqFlow>0?reqFlow:1)*60; // minutes
+
+  const h2Ok=Q_air>0?true:r.battType==='liion';
+  const achOk=reqACH>=minACH;
+
+  body.innerHTML=`
+    <div class="metrics" style="margin-bottom:12px">
+      <div class="metric m-info"><div class="metric-label">H2 Generation</div><div class="metric-val">${Q_h2<0.01?Q_h2.toExponential(1):Q_h2.toFixed(3)}</div><div class="metric-unit">m3/h ${r.battType==='liion'?'(Li-ion: negligible)':''}</div></div>
+      <div class="metric m-info"><div class="metric-label">Required Air Flow</div><div class="metric-val">${reqFlow.toFixed(0)}</div><div class="metric-unit">m3/h (${fanFlowLps.toFixed(0)} L/s)</div></div>
+      <div class="metric m-info"><div class="metric-label">Air Changes</div><div class="metric-val">${reqACH.toFixed(1)}</div><div class="metric-unit">ACH ${achOk?'<span class="badge badge-pass">OK</span>':'<span class="badge badge-warn">Below 6</span>'}</div></div>
+      <div class="metric m-info"><div class="metric-label">Room Volume</div><div class="metric-val">${roomVol.toFixed(0)}</div><div class="metric-unit">m3 (${roomArea.toFixed(0)} m2 floor)</div></div>
+    </div>
+    <table class="break-table">
+      <thead><tr><th>Parameter</th><th style="text-align:right">Value</th></tr></thead>
+      <tbody>
+        <tr><td>Battery type</td><td style="text-align:right">${{vla:'Vented Lead-Acid',vrla:'VRLA (Sealed)',nicd:'NiCd',liion:'Li-ion LFP'}[r.battType]}</td></tr>
+        <tr><td>Number of cells</td><td style="text-align:right">${nCells} x ${nStr} string${nStr>1?'s':''}</td></tr>
+        <tr><td>Capacity per string (Cn)</td><td style="text-align:right">${Cn} Ah</td></tr>
+        <tr><td>Charge mode</td><td style="text-align:right">${chargeMode==='boost'?'Boost / Equalise':'Float (normal)'}</td></tr>
+        <tr><td>Gassing current (Igas per 100Ah)</td><td style="text-align:right">${Igas} mA</td></tr>
+        <tr><td>H2 generation rate (Q)</td><td style="text-align:right">${Q_h2.toFixed(4)} m3/h</td></tr>
+        <tr><td>H2 concentration limit</td><td style="text-align:right">${(h2Limit*100).toFixed(1)}% (LEL = 4.0%)</td></tr>
+        <tr><td>Safety factor</td><td style="text-align:right">${safetyF.toFixed(2)}</td></tr>
+        <tr><td>Calculated air flow (from H2)</td><td style="text-align:right">${Q_air.toFixed(1)} m3/h</td></tr>
+        <tr><td>Minimum per AS/NZS 3011.1</td><td style="text-align:right">${(minACH*roomVol).toFixed(0)} m3/h (${minACH} ACH)</td></tr>
+        <tr><td style="color:var(--amber);font-weight:700">Required ventilation rate</td><td style="text-align:right;color:var(--amber);font-weight:700">${reqFlow.toFixed(0)} m3/h (${reqACH.toFixed(1)} ACH)</td></tr>
+        <tr><td>Estimated extract fan size</td><td style="text-align:right">${fanFlowLps.toFixed(0)} L/s @ ${fanPressure} Pa</td></tr>
+        <tr><td>Estimated fan power</td><td style="text-align:right">${(fanPower*1000).toFixed(0)} W</td></tr>
+        <tr><td>Dilution time (full volume)</td><td style="text-align:right">${dilutionTime.toFixed(0)} min</td></tr>
+      </tbody>
+    </table>
+    ${r.battType==='liion'?'<div class="note" style="margin-top:10px;border-left-color:var(--info)"><strong>Li-ion batteries</strong> do not produce hydrogen during normal charging. Ventilation is still recommended for thermal management and to dilute potential off-gassing from thermal events. Consult NFPA 855 / FM 5-33 for Li-ion specific requirements.</div>':''}
+    ${r.battType==='vrla'?'<div class="note" style="margin-top:10px"><strong>VRLA cells:</strong> Gas recombination efficiency is typically 95-99%, but during overcharge or thermal runaway events, gas may vent. Design ventilation for worst-case boost charge scenario. Per IEEE 1635/ASHRAE 21, VRLA rooms still require ventilation.</div>':''}
+    <div class="note" style="margin-top:10px">
+      <strong>Design notes:</strong> Extract ductwork should terminate at the highest point of the room (H2 is lighter than air).
+      Intake vents at low level. Fan must be spark-proof/Ex-rated per AS/NZS 60079 if H2 may exceed 1%.
+      Ensure negative pressure in battery room relative to adjacent spaces.
+    </div>`;
+}
+
+// ─── PDF HELPERS ─────────────────────────────────────────
+function buildProjRows(pairs){
+  let html='';
+  for(const [l1,v1,l2,v2] of pairs){
+    const has1=v1&&v1.trim(), has2=v2&&v2.trim();
+    if(!has1&&!has2) continue;
+    if(has1&&has2){
+      html+=`<tr><td>${l1}</td><td class="val">${v1}</td><td>${l2}</td><td class="val">${v2}</td></tr>`;
+    } else if(has1&&l2===''){
+      // Notes-style: single value spanning full width
+      html+=`<tr><td>${l1}</td><td colspan="3">${v1}</td></tr>`;
+    } else if(has1){
+      html+=`<tr><td>${l1}</td><td colspan="3" class="val">${v1}</td></tr>`;
+    } else if(has2){
+      html+=`<tr><td>${l2}</td><td colspan="3" class="val">${v2}</td></tr>`;
+    }
+  }
+  return html;
+}
+
+// ─── PDF REPORT GENERATION ───────────────────────────────
+function generatePDFReport(){
+  const r=results;
+  if(!r||!r.selectedAh){alert('Calculate battery sizing first before generating report.');return;}
+
+  const battLabel={vla:'Vented Lead-Acid',vrla:'VRLA (Sealed)',nicd:'Nickel-Cadmium',liion:'Lithium-Ion LFP'}[r.battType];
+  const now=new Date();
+  const dateStr=now.toLocaleDateString('en-AU',{day:'2-digit',month:'short',year:'numeric'});
+
+  const cLen=secInputs.cableLength, cMat=secInputs.cableMaterial==='cu'?'Copper':'Aluminium', cIns=secInputs.cableInsulation.toUpperCase();
+  const rL=secInputs.roomLength, rW=secInputs.roomWidth, rH=secInputs.roomHeight;
+
+  // Read project details
+  const pName=(document.getElementById('proj-name')||{}).value||'';
+  const pNumber=(document.getElementById('proj-number')||{}).value||'';
+  const pClient=(document.getElementById('proj-client')||{}).value||'';
+  const pLocation=(document.getElementById('proj-location')||{}).value||'';
+  const pDesigner=(document.getElementById('proj-designer')||{}).value||'';
+  const pDate=(document.getElementById('proj-date')||{}).value||dateStr;
+  const pDrawing=(document.getElementById('proj-drawing')||{}).value||'';
+  const pRevision=(document.getElementById('proj-revision')||{}).value||'';
+  const pStatus=(document.getElementById('proj-status')||{}).value||'Preliminary';
+  const pNotes=(document.getElementById('proj-notes')||{}).value||'';
+
+  const dutyCycleSVG = buildDutyCycleSVG(r.periods, r.autonomy, r.peakA);
+  const voltageSVG = buildVoltageDischargeSVG(r);
+  const bankSVG = renderBankSVG(r);
+  const bankH = 50+r.nStrings*(Math.ceil(r.nCells/30)*(28+4)+((r.nStrings>1)?20:12))+20;
+
+  const w=window.open('','_blank');
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Battery Sizing Report</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Force print colours */
+*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important;margin:0;padding:0;box-sizing:border-box}
+@page{size:A4 portrait;margin:20mm 18mm 18mm 18mm}
+
+/* TYPOGRAPHY:
+   Syne 700  → h1 only
+   Syne 600  → h2
+   DM Mono 600 → th, chart titles, .val (emphasised values), pass/fail
+   DM Mono 500 → label column (first col in 2-col), subtitle
+   Lora 500  → body, value column, regular td
+   Lora 500i → disclaimer, footnotes
+   No <strong>/<b> — use .val or .sum classes */
+
+body{font:500 9pt/1.5 'Lora',serif;color:#1e2738;background:#fff;padding:20mm 18mm}
+h1{font:700 16pt 'Syne',sans-serif;color:#2bb5a0;border-bottom:2px solid #2bb5a0;padding-bottom:6px;margin-bottom:8px}
+h2{font:600 11pt 'Syne',sans-serif;color:#2bb5a0;border-bottom:1px solid #2bb5a0;padding-bottom:4px;margin:14px 0 8px}
+.subtitle{font:500 8pt 'DM Mono',monospace;color:#888;margin-bottom:14px}
+
+table{width:100%;border-collapse:collapse;margin:6px 0 10px}
+th{text-align:left;font:600 8pt 'DM Mono',monospace;color:#2bb5a0;text-transform:uppercase;padding:5px 8px;border-bottom:2px solid #2bb5a0;letter-spacing:0.3px}
+td{padding:4px 8px;border-bottom:1px solid #e0e8e8;font:500 9pt 'Lora',serif;color:#1e2738;vertical-align:top}
+tr:last-child td{border-bottom:none}
+
+.t2{table-layout:fixed}
+.t2 td:first-child{width:40%;font:500 8pt 'DM Mono',monospace;color:#888}
+.t2 td:last-child{width:60%;font:500 9pt 'Lora',serif;color:#1e2738;word-wrap:break-word}
+
+.val{font:600 9pt 'DM Mono',monospace;color:#1e2738}
+.val-t{font:600 9pt 'DM Mono',monospace;color:#2bb5a0}
+.sum td{background:#f0faf8!important;font:600 9pt 'DM Mono',monospace;color:#1e2738;border-top:1px solid #2bb5a0}
+.pass{font:600 8pt 'DM Mono',monospace;color:#2bb5a0}
+.fail{font:600 8pt 'DM Mono',monospace;color:#e04040}
+
+.chart-wrap{background:#1e2738!important;border-radius:8px;padding:8px;margin:8px 0;page-break-inside:avoid}
+.chart-title{font:600 8pt 'DM Mono',monospace;color:#2bb5a0;margin-bottom:4px}
+svg{display:block;width:100%;height:auto}
+
+.note{font:italic 500 8pt 'Lora',serif;color:#888;margin:4px 0}
+.disclaimer{font:italic 500 8pt 'Lora',serif;color:#999;border-top:1px solid #ddd;padding-top:8px;margin-top:16px}
+.section{page-break-inside:avoid;margin-bottom:4px}
+.proj-table{table-layout:fixed;margin:4px 0 12px}
+.proj-table td{border-bottom:1px solid #e0e8e8;padding:3px 8px}
+.proj-table td:nth-child(odd){width:18%;font:500 8pt 'DM Mono',monospace;color:#888}
+.proj-table td:nth-child(even){width:32%;font:500 9pt 'Lora',serif;color:#1e2738}
+@media print{body{padding:0}.chart-wrap{background:#1e2738!important}}
+</style></head><body>
+
+<h1>Battery &amp; UPS Sizing Report</h1>
+<div class="subtitle">IEEE 485-2020 / AS 2676 / AS/NZS 3008</div>
+
+${(pName||pNumber||pClient||pDesigner||pLocation)?`<table class="proj-table"><tbody>
+${buildProjRows([
+  ['Project',pName,'Project No.',pNumber],
+  ['Client',pClient,'Location',pLocation],
+  ['Designed by',pDesigner,'Date',pDate],
+  ['Drawing Ref',pDrawing,'Revision',pRevision],
+  ['Status',pStatus,'',''],
+  ['Notes',pNotes,'','']
+])}</tbody></table>`:''}
+
+<div class="section">
+<h2>1. DC System Parameters</h2>
+<table class="t2"><tbody>
+<tr><td>Nominal system voltage</td><td>${r.sysV} Vdc</td></tr>
+<tr><td>Minimum system voltage</td><td>${r.vMin} Vdc</td></tr>
+<tr><td>Maximum system voltage</td><td>${r.vMax} Vdc</td></tr>
+<tr><td>Battery type</td><td>${battLabel}</td></tr>
+<tr><td>Float voltage per cell</td><td>${r.floatVpc.toFixed(2)} V</td></tr>
+<tr><td>End-of-discharge V/cell</td><td>${r.eodVpc.toFixed(2)} V</td></tr>
+<tr><td>Autonomy time</td><td>${r.autonomy} min (${(r.autonomy/60).toFixed(1)} hours)</td></tr>
+<tr><td>Ambient temperature</td><td>${r.tempC} deg C</td></tr>
+</tbody></table></div>
+
+<div class="section">
+<h2>2. Load Profile (Duty Cycle)</h2>
+<table>
+<thead><tr><th>Load Description</th><th>Type</th><th>Current (A)</th><th>Start (min)</th><th>Duration (min)</th></tr></thead>
+<tbody>
+${loads.map(l=>`<tr><td>${l.desc}</td><td>${l.type}</td><td class="val">${l.amps}</td><td>${l.start}</td><td>${l.dur}</td></tr>`).join('')}
+<tr class="sum"><td>Total continuous</td><td></td><td>${r.contA.toFixed(1)} A</td><td></td><td></td></tr>
+<tr class="sum"><td>Peak momentary</td><td></td><td>${r.peakA.toFixed(1)} A</td><td></td><td></td></tr>
+</tbody></table>
+<div class="chart-wrap"><div class="chart-title">Duty Cycle Diagram (IEEE 485 Figure 1)</div>
+<svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg">${dutyCycleSVG}</svg></div>
+</div>
+
+<div class="section">
+<h2>3. Battery Capacity Sizing</h2>
+<table>
+<thead><tr><th>Step</th><th>Factor</th><th style="text-align:right">Ah</th></tr></thead>
+<tbody>
+<tr><td>Raw load energy</td><td>Sum(A x h)</td><td style="text-align:right" class="val">${r.totalAh.toFixed(1)}</td></tr>
+<tr><td>System efficiency</td><td class="val">${(r.sysEff*100).toFixed(0)}%</td><td style="text-align:right" class="val">${r.ahDesign.toFixed(1)}</td></tr>
+<tr><td>Max depth of discharge</td><td class="val">${(r.maxDoD*100).toFixed(0)}%</td><td style="text-align:right" class="val">${r.ahDoD.toFixed(1)}</td></tr>
+<tr><td>Aging factor</td><td class="val">${r.agingF.toFixed(2)}</td><td style="text-align:right" class="val">${r.ahAging.toFixed(1)}</td></tr>
+<tr><td>Temperature correction</td><td class="val">${r.tempFactor.toFixed(3)} (${r.tempC} deg C)</td><td style="text-align:right" class="val">${r.ahTemp.toFixed(1)}</td></tr>
+<tr><td>Design margin</td><td class="val">${(r.designM*100).toFixed(0)}%</td><td style="text-align:right" class="val">${r.ahMargin.toFixed(1)}</td></tr>
+<tr class="sum"><td>Minimum required</td><td></td><td style="text-align:right">${r.requiredAh} Ah</td></tr>
+<tr class="sum"><td>Selected capacity</td><td></td><td style="text-align:right" class="val-t">${r.selectedAh} Ah</td></tr>
+</tbody></table></div>
+
+<div class="section">
+<h2>4. Cell &amp; Bank Topology</h2>
+<table class="t2"><tbody>
+<tr><td>Cells per string (series)</td><td class="val">${r.nCells}</td></tr>
+<tr><td>Parallel strings</td><td class="val">${r.nStrings}</td></tr>
+<tr><td>Ah per string</td><td class="val">${r.ahPerString} Ah</td></tr>
+<tr><td>Total bank capacity</td><td class="val">${r.selectedAh} Ah</td></tr>
+<tr><td>Total cells</td><td class="val">${r.totalCells}</td></tr>
+<tr><td>Float bus voltage</td><td class="val">${(r.nCells*r.floatVpc).toFixed(1)} V</td></tr>
+<tr><td>Nominal bus voltage</td><td class="val">${(r.nCells*r.nomCellV).toFixed(1)} V</td></tr>
+<tr><td>Actual EoD V/cell</td><td><span class="val">${r.actualEodVpc.toFixed(3)} V</span> <span class="${r.actualEodVpc>=r.eodVpc?'pass':'fail'}">${r.actualEodVpc>=r.eodVpc?'PASS':'FAIL'}</span></td></tr>
+<tr><td>Bank energy</td><td class="val">${r.bankKwh.toFixed(1)} kWh</td></tr>
+<tr><td>Estimated weight</td><td class="val">${r.estWeight.toFixed(0)} kg</td></tr>
+<tr><td>Bank topology</td><td class="val">${r.nStrings}P${r.nCells}S</td></tr>
+<tr><td>Capacity margin</td><td><span class="${r.capacityOk?'pass':'fail'}">${r.capacityOk?'+'+r.capacityMarginPct.toFixed(0)+'% OK':'UNDERSIZED'}</span></td></tr>
+</tbody></table>
+<div class="chart-wrap"><div class="chart-title">Battery Bank Layout (${r.nStrings}P${r.nCells}S)</div>
+<svg viewBox="0 0 700 ${bankH}" xmlns="http://www.w3.org/2000/svg">${bankSVG}</svg></div>
+</div>
+
+<div class="section">
+<h2>5. Voltage Discharge Profile</h2>
+<div class="chart-wrap"><div class="chart-title">Bus Voltage vs Time During Duty Cycle</div>
+<svg viewBox="0 0 700 240" xmlns="http://www.w3.org/2000/svg">${voltageSVG}</svg></div>
+</div>
+
+<div class="section">
+<h2>6. Charger Sizing</h2>
+<table class="t2"><tbody>
+<tr><td>Ah removed during discharge</td><td class="val">${r.totalAh.toFixed(1)} Ah</td></tr>
+<tr><td>Recharge time</td><td class="val">${r.rechargeH} hours</td></tr>
+<tr><td>Recharge current</td><td class="val">${r.rechargeCurrent.toFixed(1)} A</td></tr>
+<tr><td>Continuous DC load</td><td class="val">${r.contA.toFixed(1)} A</td></tr>
+<tr><td>Required charger rating</td><td class="val-t">${r.chargerRounded} A @ ${(r.nCells*r.floatVpc).toFixed(0)} Vdc</td></tr>
+<tr><td>Charger power</td><td class="val">${(r.chargerPower/1000).toFixed(1)} kW</td></tr>
+${r.nStrings>1?`<tr><td>Per-string charger</td><td class="val">${r.chargerRoundedPerStr} A</td></tr>`:''}
+<tr><td>Charging mode</td><td class="val">${secInputs.chargeMode.toUpperCase()}</td></tr>
+</tbody></table></div>
+
+<div class="section">
+<h2>7. DC Cable Sizing (AS/NZS 3008)</h2>
+<table class="t2"><tbody>
+<tr><td>Cable run length</td><td class="val">${cLen} m (${cLen*2} m total DC +/-)</td></tr>
+<tr><td>Conductor</td><td class="val">${cMat} / ${cIns}</td></tr>
+<tr><td>Design current (continuous)</td><td class="val">${r.contA.toFixed(1)} A</td></tr>
+<tr><td>Peak current</td><td class="val">${r.peakA.toFixed(1)} A</td></tr>
+<tr><td>Max voltage drop</td><td class="val">${secInputs.cableVdLimit}%</td></tr>
+</tbody></table>
+<p class="note">Cable selection verified against AS/NZS 3008 Tables 3-21 with derating for installation method and temperature.</p>
+</div>
+
+<div class="section">
+<h2>8. Battery Room Ventilation (EN 50272-2)</h2>
+<table class="t2"><tbody>
+<tr><td>Room dimensions</td><td class="val">${rL} x ${rW} x ${rH} m (${(rL*rW*rH).toFixed(0)} m3)</td></tr>
+<tr><td>Battery type</td><td class="val">${battLabel}</td></tr>
+<tr><td>Charge mode for ventilation</td><td class="val">${secInputs.ventChargeMode==='boost'?'Boost / Equalise':'Float (normal)'}</td></tr>
+<tr><td>H2 concentration limit</td><td class="val">${secInputs.h2Limit}%</td></tr>
+<tr><td>Safety factor</td><td class="val">${secInputs.ventSafety}</td></tr>
+</tbody></table>
+<p class="note">Extract ductwork to terminate at highest point of room. Fan must be spark-proof if H2 may exceed 1%.</p>
+</div>
+
+<div class="disclaimer">
+Disclaimer: This report is generated by SparkyCalc for preliminary engineering estimation purposes only.
+Results must be verified by a qualified electrical engineer against manufacturer data sheets and site-specific conditions.
+Standards: IEEE 485-2020, IEEE 946, AS/NZS 3008, EN 50272-2 / AS/NZS 3011.1.
+</div>
+
+</body></html>`);
+  w.document.close();
+  setTimeout(()=>w.print(), 500);
+}
+
+// ─── INIT ─────────────────────────────────────────────────
+</script></body></html>
